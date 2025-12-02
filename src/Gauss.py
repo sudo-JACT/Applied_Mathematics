@@ -145,7 +145,7 @@ def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol) -> float:
 
 
 
-def Chebyshev_Polynomials(degree: int) -> type[UndefinedFunction]:
+def Chebyshev_Polynomials_1(degree: int) -> type[UndefinedFunction]:
     
     x = Symbol("x")
     
@@ -160,25 +160,40 @@ def Chebyshev_Polynomials(degree: int) -> type[UndefinedFunction]:
     
     else:
         
-        Tn = ((2 * x * Chebyshev_Polynomials(degree-1)) - Chebyshev_Polynomials(degree-2))
+        Tn = ((2 * x * Chebyshev_Polynomials_1(degree-1)) - Chebyshev_Polynomials_1(degree-2))
         
     
     return Tn
 
 
 
-def Chebyshev_Zeros():
+def Chebyshev_Zeros_1(n: int, i: int):
     
-    pass
-
-
-def Chebyshev_Weight_Functions():
+    xi = np.cos(((((2*i) + 1) * np.pi) / ((2*n))))
     
-    pass
+    return xi
 
 
 
-def Gauss_Chebyshev() -> float:
+
+def Gauss_Chebyshev_1(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
+    
+    C = 0
+    
+    w = np.pi/(n)
+    
+    
+    g = lambdify(s, f, "numpy")
+    
+    for i in range(n):
+        
+        C += g(Chebyshev_Zeros_1(n, i))
+        
+    return w*C
+
+
+
+def Gauss_Chebyshev_2(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
     
     pass
 
@@ -189,8 +204,8 @@ if __name__ == "__main__":
     
     x = Symbol("x")
     
-    f = cos(x)
+    f = 1
     
-    n = 1
+    n = 2
     
-    print(Gauss_Legendre(n, f, x))
+    print(Gauss_Chebyshev_1(n, f, x))
