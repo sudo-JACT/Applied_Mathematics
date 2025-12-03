@@ -193,9 +193,35 @@ def Gauss_Chebyshev_1(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
 
 
 
+
+def Chebyshev_Zeros_2(n: int, i: int):
+    
+    xi = np.cos(((i+1) * np.pi) / ((n+2)))
+    
+    return xi
+
+
+def Chebyshev_W_2(n: int, i: int) -> float:
+    
+    wi = ((np.pi) / (n+2)) * (np.sin(((i + 1) * np.pi) / (n+2))**2)
+    
+    return wi
+
+
 def Gauss_Chebyshev_2(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
     
-    pass
+    C = 0
+    
+    
+    g = lambdify(s, f, "numpy")
+    
+    
+    for i in range(n+1):
+        
+        C += (g(Chebyshev_Zeros_2(n, i)) * Chebyshev_W_2(n, i))
+        
+    
+    return C
 
 
 
@@ -206,6 +232,6 @@ if __name__ == "__main__":
     
     f = 1
     
-    n = 2
+    n = 4
     
-    print(Gauss_Chebyshev_1(n, f, x))
+    print(Gauss_Chebyshev_2(n, f, x))x
