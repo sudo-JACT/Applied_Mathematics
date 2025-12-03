@@ -5,6 +5,12 @@ from scipy import *
 
 
 
+def write_on_file():
+    
+    pass
+
+
+
 def Golub_Welsch(nodes: int) -> list[list[float]]:
     
     
@@ -231,7 +237,7 @@ if __name__ == "__main__":
     x = Symbol("x")
     
     f = 1
-    
+
     n = 4
     
-    print(Gauss_Chebyshev_2(n, f, x))x
+    print(Gauss_Chebyshev_2(n, f, x))
