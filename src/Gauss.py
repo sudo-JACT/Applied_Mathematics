@@ -131,7 +131,7 @@ def Finde_Xk_and_Wk(nodes: int) -> list[list[float]]:
 
 
 
-def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol) -> float:
+def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol, a: float, b: float) -> float:
     
     m = Finde_Xk_and_Wk(nodes)
     
@@ -144,10 +144,12 @@ def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol) -> float:
     
     for i in range(n):
         
-        G += (m[0][i] * g(m[1][i]))
+        x = (((b-a)/2) * m[1][i]) + ((a+b)/2)
+        
+        G += (m[0][i] * g(x))
         
     
-    return G
+    return G * ((b-a) / 2)
 
 
 
@@ -238,6 +240,7 @@ if __name__ == "__main__":
     
     f = 1
 
-    n = 4
+    n = 5
     
     print(Gauss_Chebyshev_2(n, f, x))
+    print(Gauss_Legendre(n, f, x, -1, 1))
