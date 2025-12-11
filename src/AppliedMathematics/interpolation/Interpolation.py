@@ -81,6 +81,13 @@ def Lagrange(x: float, xn: list[float], yn: list[float]) -> float:
 
 
 
+# ToDo interpolazione di Newton e Differenze divise
+# ToDo errore spline, spline cubiche, quadratiche
+# ToDo Gershgorin
+# ToDo interpolazione a due varibili con spline
+
+
+
 if __name__ == "__main__":
     
     y = Symbol("y")

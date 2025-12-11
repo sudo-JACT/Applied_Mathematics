@@ -1,7 +1,7 @@
 import numpy as np 
-from sympy import *
+from sympy import Symbol, lambdify
 from sympy.core.function import UndefinedFunction
-from scipy import *
+from sympy.core.add import Add
 
 
 
@@ -60,9 +60,7 @@ def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol, a: float, 
 
 
 
-def Chebyshev_Polynomials_1(degree: int) -> type[UndefinedFunction]:
-    
-    x = Symbol("x")
+def Chebyshev_Polynomials_1(degree: int, s: Symbol) -> type[Add]:
     
     
     if degree == 0:
@@ -71,11 +69,11 @@ def Chebyshev_Polynomials_1(degree: int) -> type[UndefinedFunction]:
     
     elif degree == 1:
         
-        Tn = x
+        Tn = s
     
     else:
         
-        Tn = ((2 * x * Chebyshev_Polynomials_1(degree-1)) - Chebyshev_Polynomials_1(degree-2))
+        Tn = ((2 * s * Chebyshev_Polynomials_1(degree-1, s)) - Chebyshev_Polynomials_1(degree-2, s))
         
     
     return Tn
@@ -123,7 +121,26 @@ def Chebyshev_W_2(n: int, i: int) -> float:
     return wi
 
 
-def Gauss_Chebyshev_2(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
+def Chebyshev_Polynomials_2(degree: int, s: Symbol) -> type[Add]:
+    
+    
+    if degree == 0:
+        
+        Un = 1
+        
+    elif degree == 1:
+        
+        Un = 2*s
+        
+    else:
+        
+        Un = ((2 * s * Chebyshev_Polynomials_2(degree-1, s)) - Chebyshev_Polynomials_2(degree-2, s))
+    
+    
+    return Un
+
+
+def Gauss_Chebyshev_2(n: int, f: type[Add], s: Symbol) -> float:
     
     C = 0
     
@@ -139,6 +156,9 @@ def Gauss_Chebyshev_2(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
     return C
 
 
+# ToDo QUADRATURA DI CLENSHAW-CURTIS https://en.wikipedia.org/wiki/Clenshaw–Curtis_quadrature
+
+
 
 
 if __name__ == "__main__":
@@ -151,3 +171,5 @@ if __name__ == "__main__":
     
     print(Gauss_Chebyshev_2(n, f, x))
     print(Gauss_Legendre(n, f, x, -1, 1))
+    print(Chebyshev_Polynomials_1(3, x))
+    print(Chebyshev_Polynomials_2(2, x))
