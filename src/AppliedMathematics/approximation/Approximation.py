@@ -2,7 +2,6 @@ from math import factorial
 import numpy as np 
 from sympy import *
 from sympy.core.function import UndefinedFunction
-import matplotlib.pyplot as plt
 
 
 
@@ -12,9 +11,11 @@ def binomial(k: int, n: int) -> float:
 
 
 
+
 def Bernstein_Polynomials(k: int, n: int, x: float) -> float :
     
     return (binomial(k, n) * (x**k) * ((1-x)**(n-k)))
+
 
 
 def Bernstein_Approximation(k: int, n: int, x: float, f, s) -> float :  # funzione che calcola i polinomi di Bernstein Bf(x)
@@ -54,6 +55,8 @@ def Bezier_Curves(p: list[float], t: float) -> float:  # curva di Bézier
 
 if __name__ == "__main__":
     
+    import matplotlib.pyplot as plt
+    
     h = 100
     
     t = [i/h for i in range(h+1)]  # decomposizione t che andara da 0 a 1 con passo 0.01
@@ -73,10 +76,8 @@ if __name__ == "__main__":
     Bsupy = np.array(Bsupy)
     
     
-    """
-    plotto le curve
-    """
-    
+    #plotto le curve
+        
     plt.plot(Bsupx, Bsupy, "k", label='Curva di Bézier superiore')
     
     plt.plot(xsup, ysup, "ok", label='Punti Controllo Sup.')
@@ -90,10 +91,8 @@ if __name__ == "__main__":
     Binfy = [Bezier_Curves(yinf, i) for i in t] # calcolo Bézier per le y superiori
     
     
-    """
-    plotto sia le curve che i punti
-    """
-    
+    #plotto sia le curve che i punti
+        
     plt.plot(Binfx, Binfy, 'r', label='Curva di Bézier inferiore')
     
     plt.plot(xinf, yinf, 'or', label='Punti Controllo Inf.')

@@ -19,112 +19,19 @@ def Golub_Welsch(nodes: int) -> list[list[float]]:
 
 
 
-def Finde_Xk_and_Wk(nodes: int) -> list[list[float]]:
-    
-    
-    m = []
-    
-    
-    try:
+def Finde_Xk_and_Wk(nodes: int) -> list[list[float]]:  # funzione che restituisce sia i pesi che i nodi di Legendre
         
-        with open("computed_nodes.csv", "r") as file:
-            
-            l = file.readlines()
-            
-            l = [i.rstrip().split(",") for i in l]
     
-    
-            c = 0
-            flag = False
-            
-            for i in l:
-                
-                if int(i[0]) == nodes:
-                    
-                    c += 1
-                    
-                    k = [float(j) for j in i]
-                    
-                    k.pop(0)
-                    
-                    m.append(k)
-                    
-                if c == 2:
-                    
-                    flag = True
-                    
-                    break
-        
-            
-            
-            if not(flag):
-                
-                m.clear()
-                
-                file.close()
-                
-                with open("computed_nodes.csv", "a") as file:
-                    
-                    m = Golub_Welsch(nodes)
-                    
-                    n = "" + str(nodes) + ","
-                    w = "" + str(nodes) + ","
-                    
-                    for i in m[0]:
-                        
-                        n += str(i) + ","
-                    
-                    n = n[:-1]
-                    n += "\n"
-                        
-                        
-                        
-                    for i in m[1]:
-                        
-                        w += str(i) + ","
-                        
-                    w = w[:-1]
-                    w += "\n"
-                    
-                    
-                    file.write(n)
-                    file.write(w)
-                        
-
-
-            
-    except:
-        
-        with open("computed_nodes.csv", "w") as file:
-                    
-            m = Golub_Welsch(nodes)
-            
-            n = "" + str(nodes) + ","
-            w = "" + str(nodes) + ","
-            
-            for i in m[0]:
-                
-                n += str(i) + ","
-            
-            n = n[:-1]
-            n += "\n"
-                
-                
-                
-            for i in m[1]:
-                
-                w += str(i) + ","
-                
-            w = w[:-1]
-            w += "\n"
-            
-            
-            file.write(n)
-            file.write(w)
-    
+    m = [
+        [[2], [0]],
+        [[1, 1], [-0.5773502691896258, 0.5773502691896258]],
+        [[0.5555555555555556, 0.8888888888888888, 0.5555555555555556], [-0.7745966692414834, 0, 0.7745966692414834]],
+        [[0.3478548451374538, 0.6521451548625461, 0.6521451548625461, 0.3478548451374538], [-0.8611363115940526, -0.3399810435848563, 0.3399810435848563, 0.8611363115940526]],
+        [[0.2369268850561891, 0.4786286704993665, 0.5688888888888889, 0.4786286704993665, 0.2369268850561891], [-0.9061798459386640, -0.5384693101056831, 0, 0.5384693101056831, 0.9061798459386640]]
+    ]
     
         
-    return m
+    return m[nodes-1]
             
             
 

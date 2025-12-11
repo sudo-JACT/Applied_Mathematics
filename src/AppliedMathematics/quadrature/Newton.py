@@ -1,7 +1,6 @@
 import numpy as np 
-from sympy import *
+from sympy import lambdify, Symbol
 from sympy.core.function import UndefinedFunction
-from scipy import *
 
 
 
@@ -17,8 +16,9 @@ def Cavalieri_Simpson(a: float, b: float, f, s: Symbol) -> float:
 
 
 
-def Cavalieri_Simpson_Comp(a: float, b: float, ep: float, n: int, f, s: Symbol) -> tuple[int, float, float]:
+def Iterated_Cavalieri_Simpson(a: float, b: float, err: float, points: int, f, s: Symbol) -> tuple[int, float, float]:
 
+    n = points
     
     fIV = f.diff(s, 4)
     
@@ -29,10 +29,10 @@ def Cavalieri_Simpson_Comp(a: float, b: float, ep: float, n: int, f, s: Symbol) 
     max = np.max(np.abs(fIV(np.linspace(a, b, 10000))))
     
     
-    E = abs((((b-a)**5) / (2880 * ((n)**4))) * max)
+    E = abs((((b-a)**5) / (2880 * ((n+1)**4))) * max)
     
     
-    if E <= ep:
+    if E <= err:
         
         x = np.linspace(a, b, n+1)
         
@@ -56,7 +56,7 @@ def Cavalieri_Simpson_Comp(a: float, b: float, ep: float, n: int, f, s: Symbol) 
         
     else:
         
-        n, Q, E = Cavalieri_Simpson_Comp(a, b, ep, (1+n), f, s)
+        n, Q, E = Iterated_Cavalieri_Simpson(a, b, ep, (1+n), f, s)
     
     return (n, Q, E)
     
@@ -84,7 +84,11 @@ def Newton_Cotes(points: int, f, s: Symbol, a: float, b: float) -> float:  # fuz
     
     f = lambdify(s, f, "numpy")
     
-    y = f(np.linspace(a, b, n+1))  # Calcolo tutti gli yi
+    y = np.linspace(a, b, n+1)  # Calcolo tutti gli yi
+    
+    y2 = [f(i) for i in y]
+    
+    y = y2
     
     w = Newton_Cotes_Weights(n)
     
@@ -100,20 +104,132 @@ def Newton_Cotes(points: int, f, s: Symbol, a: float, b: float) -> float:  # fuz
     return I * h
 
 
+
+def Trapezoidal_Rule(a: float, b: float, f, s: Symbol) -> float:
+    
+    g = lambdify(s, f, "numpy")
+    
+    
+    return ((b-a) / 2) * (g(a) + g(b))
+
+
+
+
+def Itereted_Trapezoidal_Rule(a: float, b: float, points: int, err: float, f, s: Symbol) -> tuple[float, int, float]:
+    
+    E = Iterated_Trapezoidal_Rule_Error(a, b, points, f, s)
+    
+    if E <= err:
+        
+        f = lambdify(s, f, "numpy")
+    
+        x = [f(i) for i in np.linspace(a, b, points+1)]
+        
+        h = ((b-a) / (points)) / 2
+            
+        Tn = (x[0] + x[-1]) + 2*np.sum(x[1:-1])   
+            
+        return (Tn * h, points, E)
+    
+    else:
+        
+        return Itereted_Trapezoidal_Rule(a, b, 2*points, err, f, s)
+    
+
+
+
+def Cavalieri_Simpson_Error(a: float, b: float, f, s: Symbol) -> float:
+    
+    fIV = f.diff(s, 4)
+    fIV = lambdify(s, fIV, "numpy")
+
+    max = np.max(np.abs(fIV(np.linspace(a, b, 10000))))
+    
+    E = abs((((b-a)**5) / 180) * max)
+    
+    return E
+
+
+
+def Iterated_Cavalieri_Simpson_Error(a: float, b: float, points: int, f, s: Symbol) -> float:
+    
+    n = points
+    
+    fIV = f.diff(s, 4)
+    fIV = lambdify(s, fIV, "numpy")
+
+    max = np.max(np.abs(fIV(np.linspace(a, b, 10000))))
+    
+    E = abs((((b-a)**5) / (2880 * ((n+1)**4))) * max)
+    
+    return E
+
+
+
+
+def Trapezoidal_Rule_Error(a: float, b: float, f, s: Symbol) -> float:
+    
+    fII = f.diff(s, 2)
+    fII = lambdify(s, fII, "numpy")
+    
+    h = (b-a)
+    
+    max = np.max(np.abs(fII(np.linspace(a, b, 10000))))
+    
+    E = abs(((h**3) / 12) * max)
+    
+    return E
+
+
+
+def Iterated_Trapezoidal_Rule_Error(a: float, b: float, points: int, f, s: Symbol) -> float:
+    
+    fII = f.diff(s, 2)
+    fII = lambdify(s, fII, "numpy")
+    
+    h = (b-a) / (points+1)
+    
+    max = np.max(np.abs(fII(np.linspace(a, b, 10000))))
+    
+    E = abs(((((b-a)**3) / (12 * ((points+1)**2)))) * max)
+    
+    return E
+
+
+
+
 if __name__ == "__main__":
     
     x = Symbol("x")
     
     f = x**2
     
+    #f = f.diff(x)
+    
     a, b = 0, 1
     
-    e = 10**(-3)
+    e = 10**(-8)
     
     n = 3
     
-    print(f"Newton-Cotes of f(x)={f}: {Newton_Cotes(n, f, x, a, b)}")
     
-    print(f"Cavalieri-Simpson of f(x)={f}: {Cavalieri_Simpson(a, b, f, x)}")
+    #print(f"Cavalieri-Simpson Error of f(x)={f}: {Cavalieri_Simpson_Error(a, b, f, x)}")
+    #
+    #print(f"Trapezoidal Rule of f(x)={f}: {Trapezoidal_Rule(a, b, f, x)}")
+    #
+    #print(f"Newton-Cotes of f(x)={f}: {Newton_Cotes(n, f, x, a, b)}")
+    #
+    #print(f"Cavalieri-Simpson of f(x)={f}: {Cavalieri_Simpson(a, b, f, x)}")
+    #
+    #print(f"Iterated Cavalieri-Simpson of f(x)={f}: {Iterated_Cavalieri_Simpson(a, b, e, n, f, x)[1]}")
+    #
+    #print(f"Iterated Cavalieri-Simpson Error of f(x)={f}: {Iterated_Cavalieri_Simpson_Error(a, b, Iterated_Cavalieri_Simpson(a, b, e, n, f, x)[0], f, x)}")
     
-    print(f"Iterated Cavalieri-Simpson of f(x)={f}: {Cavalieri_Simpson_Comp(a, b, e, n, f, x)[1]}")
+    
+    Tn = Itereted_Trapezoidal_Rule(a, b, 1, e, f, x)
+    
+    print(1/3)
+    print(Tn[0])
+    print(Tn[2])
+    print(abs((1/3) - Tn[0]))
+    print(Tn[1])

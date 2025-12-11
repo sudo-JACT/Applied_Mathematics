@@ -17,6 +17,20 @@ def binomial(k: int, n: int) -> float:
     return (factorial(n) / (factorial(k) * factorial(n-k)))
 
 
+def convert(x: float) -> tuple[float, int]:
+    
+    i = 0
+    
+    while x < 1:
+        
+        x = x * 10
+        
+        i += 1
+    
+    return (i, x)
+
+
+
 if __name__ == "__main__":
     
     a = [1, 2, 3, 7.0]
