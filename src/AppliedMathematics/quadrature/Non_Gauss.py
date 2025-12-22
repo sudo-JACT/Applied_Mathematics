@@ -1,8 +1,24 @@
 import numpy as np 
-from sympy import lambdify, Symbol
+from sympy import *
 from sympy.core.function import UndefinedFunction
 
 
+def tronca(n: float, i: int) -> float:
+    
+    return float(f"{n:.{i}f}")
+
+
+def convert(x: float) -> tuple[int, float]:
+    
+    i = 0
+    
+    while x < 1:
+        
+        x = x * 10
+        
+        i += 1
+    
+    return (i, x)
 
 
 def Cavalieri_Simpson(a: float, b: float, f, s: Symbol) -> float:
@@ -198,6 +214,129 @@ def Iterated_Trapezoidal_Rule_Error(a: float, b: float, points: int, f, s: Symbo
 
 
 
+def Filon_Error(a: float, b: float, h: float, w: float, f, s: Symbol) -> float:
+    
+    
+    g = f.diff(s, 4)
+    
+    g = lambdify(s, g, "numpy")
+    
+    D = np.linspace(a, b, 10000)
+    
+    ee = [np.float64(g(i)) for i in D]
+    
+    ee = max(ee)
+    
+    th = np.float64(w*h)
+    
+    
+    if ee == 0:
+        
+        r = np.float64((h**3) * ((b - a) / 12) * (1 - (1 / (16*np.cos(th/4)))) * np.sin(th/2))
+    
+    else:
+    
+        r = np.float64((h**3) * ((b - a) / 12) * (1 - (1 / (16*np.cos(th/4)))) * np.sin(th/2) * ee)
+    
+    return abs(r)
+
+
+
+
+def Filon(a: float, b: float, points: int, error: float, tol, w: float, f, s: Symbol, cos: bool=True) -> tuple[float, float, float, int]:
+    
+    
+    h = np.float64((b-a) / (2*points))
+    
+    E = Filon_Error(a, b, h, w, f, s)
+    
+    theta = np.float64(tronca(w*h, int(convert(tol)[0])))
+    
+    
+    print(theta)
+    
+    if E <= error and theta <= tol:
+        
+        D = np.arange(a, b+h, h)
+        
+        #D = [a+i*h for i in range(points+1)]
+    
+        
+        if abs(theta) < 1e-10:
+            
+            alpha = 0
+            beta = np.float64(1/3)
+            gamma = np.float64(4/3)
+            
+        else:
+            
+            alpha = (1/theta) + (np.sin(2*theta)/(2*(theta**2))) - ((2*(np.sin(theta))**2))/(theta**3)
+            beta = ((1+(np.cos(theta)**2))/(theta**2)) - (np.sin(2*theta)/(theta**3))
+            gamma = (4/(theta**3)) * (np.sin(theta) - theta*np.cos(theta))
+        
+        
+        
+        
+        f = lambdify(s, f, "numpy")
+        
+        
+        if cos:
+            
+            c2 = 0
+            
+            for i in range(1, points):
+                
+                c2 += np.float64(f(a+(2*i*h))*np.cos(w*(a+(2*i*h))))
+            
+            C2 = np.float64((f(a)*np.cos(w*a)) + 2*c2 + f(b)*np.cos(w*b))
+            
+            C1 = 0
+            
+            for i in range(1, points+1):
+                
+                C1 += np.float64(f(a+h*(2*i-1))*np.cos(w*a + w*h*(2*i-1)))
+                
+            
+            Q = np.float64((h*alpha * (f(b)*np.sin(w*b) - f(a)*np.sin(w*a))) + beta*h*C2 + gamma*h*C1)
+                
+        else:
+            
+            s2 = 0
+            
+            for i in range(1, points):
+                
+                s2 += np.float64(f(a+2*i*h)*np.sin(w*(a+2*i*h)))
+            
+            S2 = np.float64((f(a)*np.sin(w*a)) + s2 + f(b)*np.sin(w*b))
+            
+            S1 = 0
+            
+            for i in range(1, points+1):
+                
+                S1 += np.float64(f(a+h*(2*i-1))*np.sin(w*h*(2*i-1)))
+                
+            
+            Q = np.float64((h*alpha * (f(a)*np.cos(w*a) - f(b)*np.cos(w*b))) + beta*h*S2 + gamma*h*S1)
+        
+        
+        
+        return (Q, E, h, points)
+        
+        
+    
+    else:
+        
+        return Filon(a, b, 10*points, error, tol, w, f, s, cos)
+    
+    
+    
+    
+
+
+
+
+
+
 if __name__ == "__main__":
     
     x = Symbol("x")
@@ -233,3 +372,20 @@ if __name__ == "__main__":
     print(Tn[2])
     print(abs((1/3) - Tn[0]))
     print(Tn[1])
+    
+    g = x**3
+    err = 10**(-8)
+    a, b = 0, 2*np.pi
+    points = 1
+    w = 10
+    
+    h = cos(w*x)
+    
+    #g2 = g * h
+    
+    #g2 = integrate(g2 (x, a, b))
+    
+    filon = Filon(a, b, points, err, 10**(-6), w, g, x)
+    
+    print(filon)
+    print(abs(1.18435252813066 - filon[0]))

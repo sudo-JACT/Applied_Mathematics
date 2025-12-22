@@ -17,7 +17,7 @@ def binomial(k: int, n: int) -> float:
     return (factorial(n) / (factorial(k) * factorial(n-k)))
 
 
-def convert(x: float) -> tuple[float, int]:
+def convert(x: float) -> tuple[int, float]:
     
     i = 0
     
@@ -28,6 +28,11 @@ def convert(x: float) -> tuple[float, int]:
         i += 1
     
     return (i, x)
+
+
+def tronca(n: float, i: int) -> float:
+    
+    return float(f"{n:.{i}f}")
 
 
 
