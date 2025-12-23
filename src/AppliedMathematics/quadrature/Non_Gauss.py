@@ -1,14 +1,15 @@
 import numpy as np 
 from sympy import *
 from sympy.core.function import UndefinedFunction
+from numpy import float64
 
 
-def tronca(n: float, i: int) -> float:
+def tronca(n: float64, i: int) -> float64:
     
-    return float(f"{n:.{i}f}")
+    return float64(f"{n:.{i}f}")
 
 
-def convert(x: float) -> tuple[int, float]:
+def convert(x: float64) -> tuple[int, float64]:
     
     i = 0
     
@@ -21,7 +22,7 @@ def convert(x: float) -> tuple[int, float]:
     return (i, x)
 
 
-def Cavalieri_Simpson(a: float, b: float, f, s: Symbol) -> float:
+def Cavalieri_Simpson(a: float64, b: float64, f, s: Symbol) -> float64:
     
     f = lambdify(s, f, "numpy")
     
@@ -32,7 +33,7 @@ def Cavalieri_Simpson(a: float, b: float, f, s: Symbol) -> float:
 
 
 
-def Iterated_Cavalieri_Simpson(a: float, b: float, err: float, points: int, f, s: Symbol) -> tuple[int, float, float]:
+def Iterated_Cavalieri_Simpson(a: float64, b: float64, err: float64, points: int, f, s: Symbol) -> tuple[int, float64, float64]:
 
     n = points
     
@@ -78,7 +79,7 @@ def Iterated_Cavalieri_Simpson(a: float, b: float, err: float, points: int, f, s
     
     
     
-def Newton_Cotes_Weights(n: int) -> list[float]:  # funzione che restituisce i pesi di Newton-Cotes
+def Newton_Cotes_Weights(n: int) -> list[float64]:  # funzione che restituisce i pesi di Newton-Cotes
     
     w = [
         [1/2, 1/2],
@@ -94,7 +95,7 @@ def Newton_Cotes_Weights(n: int) -> list[float]:  # funzione che restituisce i p
 
 
 
-def Newton_Cotes(points: int, f, s: Symbol, a: float, b: float) -> float:  # fuzione che calcola la quadratura di Newton-Cotes
+def Newton_Cotes(points: int, f, s: Symbol, a: float64, b: float64) -> float64:  # fuzione che calcola la quadratura di Newton-Cotes
     
     n = points
     
@@ -121,7 +122,7 @@ def Newton_Cotes(points: int, f, s: Symbol, a: float, b: float) -> float:  # fuz
 
 
 
-def Trapezoidal_Rule(a: float, b: float, f, s: Symbol) -> float:
+def Trapezoidal_Rule(a: float64, b: float64, f, s: Symbol) -> float64:
     
     g = lambdify(s, f, "numpy")
     
@@ -131,7 +132,7 @@ def Trapezoidal_Rule(a: float, b: float, f, s: Symbol) -> float:
 
 
 
-def Itereted_Trapezoidal_Rule(a: float, b: float, points: int, err: float, f, s: Symbol) -> tuple[float, int, float]:
+def Itereted_Trapezoidal_Rule(a: float64, b: float64, points: int, err: float64, f, s: Symbol) -> tuple[float64, float64, int]:
     
     E = Iterated_Trapezoidal_Rule_Error(a, b, points, f, s)
     
@@ -145,7 +146,7 @@ def Itereted_Trapezoidal_Rule(a: float, b: float, points: int, err: float, f, s:
             
         Tn = (x[0] + x[-1]) + 2*np.sum(x[1:-1])   
             
-        return (Tn * h, points, E)
+        return (Tn * h, E, points)
     
     else:
         
@@ -154,7 +155,7 @@ def Itereted_Trapezoidal_Rule(a: float, b: float, points: int, err: float, f, s:
 
 
 
-def Cavalieri_Simpson_Error(a: float, b: float, f, s: Symbol) -> float:
+def Cavalieri_Simpson_Error(a: float64, b: float64, f, s: Symbol) -> float64:
     
     fIV = f.diff(s, 4)
     fIV = lambdify(s, fIV, "numpy")
@@ -167,7 +168,7 @@ def Cavalieri_Simpson_Error(a: float, b: float, f, s: Symbol) -> float:
 
 
 
-def Iterated_Cavalieri_Simpson_Error(a: float, b: float, points: int, f, s: Symbol) -> float:
+def Iterated_Cavalieri_Simpson_Error(a: float64, b: float64, points: int, f, s: Symbol) -> float64:
     
     n = points
     
@@ -183,7 +184,7 @@ def Iterated_Cavalieri_Simpson_Error(a: float, b: float, points: int, f, s: Symb
 
 
 
-def Trapezoidal_Rule_Error(a: float, b: float, f, s: Symbol) -> float:
+def Trapezoidal_Rule_Error(a: float64, b: float64, f, s: Symbol) -> float64:
     
     fII = f.diff(s, 2)
     fII = lambdify(s, fII, "numpy")
@@ -198,7 +199,7 @@ def Trapezoidal_Rule_Error(a: float, b: float, f, s: Symbol) -> float:
 
 
 
-def Iterated_Trapezoidal_Rule_Error(a: float, b: float, points: int, f, s: Symbol) -> float:
+def Iterated_Trapezoidal_Rule_Error(a: float64, b: float64, points: int, f, s: Symbol) -> float64:
     
     fII = f.diff(s, 2)
     fII = lambdify(s, fII, "numpy")
@@ -214,7 +215,7 @@ def Iterated_Trapezoidal_Rule_Error(a: float, b: float, points: int, f, s: Symbo
 
 
 
-def Filon_Error(a: float, b: float, h: float, w: float, f, s: Symbol) -> float:
+def Filon_Error(a: float64, b: float64, h: float64, w: float64, f, s: Symbol) -> float64:
     
     
     g = f.diff(s, 4)
@@ -223,37 +224,40 @@ def Filon_Error(a: float, b: float, h: float, w: float, f, s: Symbol) -> float:
     
     D = np.linspace(a, b, 10000)
     
-    ee = [np.float64(g(i)) for i in D]
+    ee = [float64(g(i)) for i in D]
     
     ee = max(ee)
     
-    th = np.float64(w*h)
+    th = float64(w*h)
     
     
     if ee == 0:
         
-        r = np.float64((h**3) * ((b - a) / 12) * (1 - (1 / (16*np.cos(th/4)))) * np.sin(th/2))
+        r = float64((h**3) * ((b - a) / 12) * (1 - (1 / (16*np.cos(th/4)))) * np.sin(th/2))
     
     else:
     
-        r = np.float64((h**3) * ((b - a) / 12) * (1 - (1 / (16*np.cos(th/4)))) * np.sin(th/2) * ee)
+        r = float64((h**3) * ((b - a) / 12) * (1 - (1 / (16*np.cos(th/4)))) * np.sin(th/2) * ee)
     
     return abs(r)
 
 
 
 
-def Filon(a: float, b: float, points: int, error: float, tol, w: float, f, s: Symbol, cos: bool=True) -> tuple[float, float, float, int]:
+def Filon(a: float64, b: float64, points: int, error: float64, tol: float64, w: float64, f, s: Symbol, cos: bool=True) -> tuple[float64, float64, float64, int]:
     
     
-    h = np.float64((b-a) / (2*points))
+    h = float64((b-a) / (2*points))
     
     E = Filon_Error(a, b, h, w, f, s)
     
-    theta = np.float64(tronca(w*h, int(convert(tol)[0])))
+    theta = float64(tronca(w*h, int(convert(tol)[0])))
     
-    
-    print(theta)
+    if tol < float64(10**(-6)):
+        
+        tol = float64(10**(-6))
+
+
     
     if E <= error and theta <= tol:
         
@@ -264,15 +268,15 @@ def Filon(a: float, b: float, points: int, error: float, tol, w: float, f, s: Sy
         
         if abs(theta) < 1e-10:
             
-            alpha = 0
-            beta = np.float64(1/3)
-            gamma = np.float64(4/3)
+            alpha = float64(0)
+            beta = float64(1/3)
+            gamma = float64(4/3)
             
         else:
             
-            alpha = (1/theta) + (np.sin(2*theta)/(2*(theta**2))) - ((2*(np.sin(theta))**2))/(theta**3)
-            beta = ((1+(np.cos(theta)**2))/(theta**2)) - (np.sin(2*theta)/(theta**3))
-            gamma = (4/(theta**3)) * (np.sin(theta) - theta*np.cos(theta))
+            alpha = float64(1/theta) + (np.sin(2*theta)/(2*(theta**2))) - ((2*(np.sin(theta))**2))/(theta**3)
+            beta = float64((1+(np.cos(theta)**2))/(theta**2)) - (np.sin(2*theta)/(theta**3))
+            gamma = float64(4/(theta**3)) * (np.sin(theta) - theta*np.cos(theta))
         
         
         
@@ -286,18 +290,18 @@ def Filon(a: float, b: float, points: int, error: float, tol, w: float, f, s: Sy
             
             for i in range(1, points):
                 
-                c2 += np.float64(f(a+(2*i*h))*np.cos(w*(a+(2*i*h))))
+                c2 += float64(f(a+(2*i*h))*np.cos(w*(a+(2*i*h))))
             
-            C2 = np.float64((f(a)*np.cos(w*a)) + 2*c2 + f(b)*np.cos(w*b))
+            C2 = float64((f(a)*np.cos(w*a)) + 2*c2 + f(b)*np.cos(w*b))
             
             C1 = 0
             
             for i in range(1, points+1):
                 
-                C1 += np.float64(f(a+h*(2*i-1))*np.cos(w*a + w*h*(2*i-1)))
+                C1 += float64(f(a+h*(2*i-1))*np.cos(w*a + w*h*(2*i-1)))
                 
             
-            Q = np.float64((h*alpha * (f(b)*np.sin(w*b) - f(a)*np.sin(w*a))) + beta*h*C2 + gamma*h*C1)
+            Q = float64((h*alpha * (f(b)*np.sin(w*b) - f(a)*np.sin(w*a))) + beta*h*C2 + gamma*h*C1)
                 
         else:
             
@@ -305,18 +309,18 @@ def Filon(a: float, b: float, points: int, error: float, tol, w: float, f, s: Sy
             
             for i in range(1, points):
                 
-                s2 += np.float64(f(a+2*i*h)*np.sin(w*(a+2*i*h)))
+                s2 += float64(f(a+2*i*h)*np.sin(w*(a+2*i*h)))
             
-            S2 = np.float64((f(a)*np.sin(w*a)) + s2 + f(b)*np.sin(w*b))
+            S2 = float64((f(a)*np.sin(w*a)) + s2 + f(b)*np.sin(w*b))
             
             S1 = 0
             
             for i in range(1, points+1):
                 
-                S1 += np.float64(f(a+h*(2*i-1))*np.sin(w*h*(2*i-1)))
+                S1 += float64(f(a+h*(2*i-1))*np.sin(w*h*(2*i-1)))
                 
             
-            Q = np.float64((h*alpha * (f(a)*np.cos(w*a) - f(b)*np.cos(w*b))) + beta*h*S2 + gamma*h*S1)
+            Q = float64((h*alpha * (f(a)*np.cos(w*a) - f(b)*np.cos(w*b))) + beta*h*S2 + gamma*h*S1)
         
         
         
@@ -345,47 +349,57 @@ if __name__ == "__main__":
     
     #f = f.diff(x)
     
-    a, b = 0, 1
+    a, b = float64(0), float64(1)
     
-    e = 10**(-8)
+    e = float64(10**(-8))
     
-    n = 3
+    n = float64(3)
     
     
-    #print(f"Cavalieri-Simpson Error of f(x)={f}: {Cavalieri_Simpson_Error(a, b, f, x)}")
-    #
-    #print(f"Trapezoidal Rule of f(x)={f}: {Trapezoidal_Rule(a, b, f, x)}")
-    #
-    #print(f"Newton-Cotes of f(x)={f}: {Newton_Cotes(n, f, x, a, b)}")
-    #
-    #print(f"Cavalieri-Simpson of f(x)={f}: {Cavalieri_Simpson(a, b, f, x)}")
-    #
-    #print(f"Iterated Cavalieri-Simpson of f(x)={f}: {Iterated_Cavalieri_Simpson(a, b, e, n, f, x)[1]}")
-    #
-    #print(f"Iterated Cavalieri-Simpson Error of f(x)={f}: {Iterated_Cavalieri_Simpson_Error(a, b, Iterated_Cavalieri_Simpson(a, b, e, n, f, x)[0], f, x)}")
+    print(f"Cavalieri-Simpson Error of f(x)={f}: {Cavalieri_Simpson_Error(a, b, f, x)}", end="\n\n")
+    
+    print(f"Trapezoidal Rule of f(x)={f}: {Trapezoidal_Rule(a, b, f, x)}", end="\n\n")
+    
+    print(f"Newton-Cotes of f(x)={f}: {Newton_Cotes(n, f, x, a, b)}", end="\n\n")
+    
+    print(f"Cavalieri-Simpson of f(x)={f}: {Cavalieri_Simpson(a, b, f, x)}", end="\n\n")
+    
+    print(f"Iterated Cavalieri-Simpson of f(x)={f}: {Iterated_Cavalieri_Simpson(a, b, e, n, f, x)[1]}", end="\n\n")
+    
+    print(f"Iterated Cavalieri-Simpson Error of f(x)={f}: {Iterated_Cavalieri_Simpson_Error(a, b, Iterated_Cavalieri_Simpson(a, b, e, n, f, x)[0], f, x)}", end="\n\n\n")
     
     
     Tn = Itereted_Trapezoidal_Rule(a, b, 1, e, f, x)
     
-    print(1/3)
-    print(Tn[0])
-    print(Tn[2])
-    print(abs((1/3) - Tn[0]))
-    print(Tn[1])
+    print("#"*5, end="")
+    print(" Itereted Trapezoidal Rule ", end="")
+    print("#"*5)
+    
+    #print(1/3)
+    print(f"Q: {Tn[0]}")
+    print(f"Estimated Error: {Tn[1]}")
+    print(f"Real Error: {abs((1/3) - Tn[0])}")
+    print(f"Points: {Tn[2]}", end="\n\n\n")
     
     g = x**3
-    err = 10**(-8)
-    a, b = 0, 2*np.pi
+    err = float64(10**(-8))
+    a, b = float64(0), float64(2*np.pi)
     points = 1
-    w = 10
+    w = float64(10)
     
     h = cos(w*x)
     
-    #g2 = g * h
     
-    #g2 = integrate(g2 (x, a, b))
+
+    print("#"*5, end="")
+    print(" Filon ", end="")
+    print("#"*5)
     
-    filon = Filon(a, b, points, err, 10**(-6), w, g, x)
     
-    print(filon)
-    print(abs(1.18435252813066 - filon[0]))
+    filon = Filon(a, b, points, err, float64(10**(-6)), w, g, x)
+    
+    print(f"Q: {filon[0]}")
+    print(f"Estimated Error: {filon[1]}")
+    print(f"Real Error: {abs(1.18435252813066 - filon[0])}")
+    print(f"h: {filon[2]}")
+    print(f"point: {filon[3]}")

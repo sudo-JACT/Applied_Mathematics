@@ -21,7 +21,7 @@ except:
     
 
 
-def Lagrangian(z: float, x: list[int], y: list[float]) -> float :
+def Lagrangian(z: float64, x: list[int], y: list[float64]) -> float64 :
     
     px = 0
     
@@ -42,12 +42,12 @@ def Lagrangian(z: float, x: list[int], y: list[float]) -> float :
 
 
 
-def Newtonian(z: float, x: list[int], y: list[float]) -> float :
+def Newtonian(z: float64, x: list[int], y: list[float64]) -> float64 :
     
     return
 
 
-def E(x: float, f, s, ab: list[float]) -> float:
+def E(x: float64, f, s, ab: list[float64]) -> float64:
     """
     Calcola una stima dell'errore di interpolazione usando la formula:
     |f(x) - P(x)| ≤ |f^(n+1)(ξ)|/(n+1)! * |w(x)|
@@ -80,18 +80,18 @@ def E(x: float, f, s, ab: list[float]) -> float:
     return error_bound
 
 
-def abs_deriv(t, f, s) -> float:
+def abs_deriv(t, f, s) -> float64:
 
     f = lambdify(s, f, "numpy")
     
-    return abs(float(f(t)))
+    return abs(float64(f(t)))
 
-def tronca(n: float, i: int) -> float:
-    return float(f"{n:.{i}f}")
+def tronca(n: float64, i: int) -> float64:
+    return float64(f"{n:.{i}f}")
 
         
         
-def Horner(a: list[float], x: float) -> float:
+def Horner(a: list[float64], x: float64) -> float64:
     
     p = a[-1]
     
@@ -102,7 +102,7 @@ def Horner(a: list[float], x: float) -> float:
     return p
 
 
-def Taylor(f, s, x: float, x0: float, n: int) -> float:
+def Taylor(f, s, x: float64, x0: float64, n: int) -> float64:
     
     tmp = lambdify(s, f, 'numpy')
     der = f.diff(s)
@@ -121,14 +121,14 @@ def Taylor(f, s, x: float, x0: float, n: int) -> float:
     return t
 
 
-def LinearSpline(x: float, xn: tuple[float, float], yn: tuple[float, float]) -> float:
+def LinearSpline(x: float64, xn: tuple[float64, float64], yn: tuple[float64, float64]) -> float64:
     
     y = yn[0] + (x-xn[0])*((yn[0]/(xn[0]-xn[1]) + (yn[1]/(xn[1]-xn[0]))))
     
     return y
 
 
-def FindeMinNSubIntervalls(interval: tuple[float, float], f, s, t: int=(10**-3), max: int=10000, p: int=5) -> tuple[float, float, int]:
+def FindeMinNSubIntervalls(interval: tuple[float64, float64], f, s, t: int=(10**-3), max: int=10000, p: int=5) -> tuple[float64, float64, int]:
     
     h = -1.0
     err = -1.0
@@ -157,19 +157,19 @@ def FindeMinNSubIntervalls(interval: tuple[float, float], f, s, t: int=(10**-3),
     return (h, err, -1)
 
 
-def binomial(k: int, n: int) -> float:
+def binomial(k: int, n: int) -> float64:
     
     return (factorial(n) / (factorial(k) * factorial(n-k)))
 
 
-def bernstein(k: int, n: int, x: float) -> float :
+def bernstein(k: int, n: int, x: float64) -> float64 :
     
     return (binomial(k, n) * (x**k) * ((1-x)**(n-k)))
 
 
 
 
-def L(vs: list[float], v: float, i: int) -> float:
+def L(vs: list[float64], v: float64, i: int) -> float64:
     
     l = 1
     
@@ -184,7 +184,7 @@ def L(vs: list[float], v: float, i: int) -> float:
 
 
 
-def Lagrangian_3D(xs: list[float], ys: list[float], fxy, s, t, x: float, y: float) -> float :  # funzione che calcola il polinomio di Lagrange in R2
+def Lagrangian_3D(xs: list[float64], ys: list[float64], fxy, s, t, x: float64, y: float64) -> float64 :  # funzione che calcola il polinomio di Lagrange in R2
     
     pxy = 0
     

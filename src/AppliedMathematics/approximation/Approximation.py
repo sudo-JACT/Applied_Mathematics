@@ -2,31 +2,32 @@ from math import factorial
 import numpy as np 
 from sympy import *
 from sympy.core.function import UndefinedFunction
+from numpy import float64
 
 
 
-def binomial(k: int, n: int) -> float:
+def binomial(k: int, n: int) -> float64:
     
-    return (factorial(n) / (factorial(k) * factorial(n-k)))
+    return float64(float64(factorial(n)) / float64(factorial(k) * factorial(n-k)))
 
 
 
 
-def Bernstein_Polynomials(k: int, n: int, x: float) -> float :
+def Bernstein_Polynomials(k: int, n: int, x: float64) -> float64 :
     
-    return (binomial(k, n) * (x**k) * ((1-x)**(n-k)))
+    return (binomial(k, n) * float64(x**k) * float64((1-x)**(n-k)))
 
 
 
-def Bernstein_Approximation(k: int, n: int, x: float, f, s) -> float :  # funzione che calcola i polinomi di Bernstein Bf(x)
+def Bernstein_Approximation(k: int, n: int, x: float64, f, s) -> float64 :  # funzione che calcola i polinomi di Bernstein Bf(x)
     
     f = lambdify(s, f, "numpy")
     
-    bf = 0
+    bf = float64(0)
     
     for i in range(k, n+1):
     
-        bf += f(i/n) * Bernstein_Polynomials(i, n, x)
+        bf += float64(f(i/n)) * Bernstein_Polynomials(i, n, x)
         
     return bf
 
@@ -36,9 +37,9 @@ def Bernstein_Approximation(k: int, n: int, x: float, f, s) -> float :  # funzio
 
 
 
-def Bezier_Curves(p: list[float], t: float) -> float:  # curva di Bézier
+def Bezier_Curves(p: list[float64], t: float64) -> float64:  # curva di Bézier
     
-    b = 0
+    b = float64(0)
     
     n = len(p)
 

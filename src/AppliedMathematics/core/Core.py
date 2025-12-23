@@ -1,6 +1,7 @@
 from math import factorial
+from numpy import float64
 
-def Horner(a: list[float], x: float) -> float:
+def Horner(a: list[float64], x: float64) -> float64:
     
     p = a[-1]
     
@@ -12,27 +13,27 @@ def Horner(a: list[float], x: float) -> float:
 
 
 
-def binomial(k: int, n: int) -> float:
+def binomial(k: int, n: int) -> float64:
     
-    return (factorial(n) / (factorial(k) * factorial(n-k)))
+    return float64(factorial(n) / (factorial(k) * factorial(n-k)))
 
 
-def convert(x: float) -> tuple[int, float]:
+def convert(x: float64) -> tuple[int, float64]:
     
     i = 0
     
     while x < 1:
         
-        x = x * 10
+        x = float64(x * 10)
         
         i += 1
     
     return (i, x)
 
 
-def tronca(n: float, i: int) -> float:
+def tronca(n: float64, i: int) -> float64:
     
-    return float(f"{n:.{i}f}")
+    return float64(f"{n:.{i}f}")
 
 
 
@@ -40,6 +41,6 @@ if __name__ == "__main__":
     
     a = [1, 2, 3, 7.0]
     
-    x = 2
+    x = float64(2)
     
     print(Horner(a, x))

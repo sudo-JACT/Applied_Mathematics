@@ -2,6 +2,7 @@ import numpy as np
 from sympy import Symbol, lambdify
 from sympy.core.function import UndefinedFunction
 from sympy.core.add import Add
+from numpy import float64
 
 
 
@@ -11,7 +12,7 @@ def write_on_file():
 
 
 
-def Golub_Welsch(nodes: int) -> list[list[float]]:
+def Golub_Welsch(nodes: int) -> list[list[float64]]:
     
     
     return [[0.0,0.0,0.0,0.0], [0.0,0.0,0.0,0.0,0.0]]
@@ -19,7 +20,7 @@ def Golub_Welsch(nodes: int) -> list[list[float]]:
 
 
 
-def Finde_Xk_and_Wk(nodes: int) -> list[list[float]]:  # funzione che restituisce sia i pesi che i nodi di Legendre
+def Finde_Xk_and_Wk(nodes: int) -> list[list[float64]]:  # funzione che restituisce sia i pesi che i nodi di Legendre
         
     
     m = [
@@ -38,11 +39,11 @@ def Finde_Xk_and_Wk(nodes: int) -> list[list[float]]:  # funzione che restituisc
 
 
 
-def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol, a: float, b: float) -> float:
+def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol, a: float64, b: float64) -> float64:
     
     m = Finde_Xk_and_Wk(nodes)
     
-    G = 0
+    G = float64(0)
     
     n = len(m[0])
     
@@ -51,16 +52,16 @@ def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol, a: float, 
     
     for i in range(n):
         
-        x = (((b-a)/2) * m[1][i]) + ((a+b)/2)
+        x = float64(((b-a)/2) * m[1][i]) + ((a+b)/2)
         
-        G += (m[0][i] * g(x))
+        G += float64(m[0][i] * g(x))
         
     
-    return G * ((b-a) / 2)
+    return G * float64((b-a) / 2)
 
 
 
-def Chebyshev_Polynomials_1(degree: int, s: Symbol) -> type[Add]:
+def Chebyshev_Polynomials_1(degree: int, s: Symbol) -> Add:
     
     
     if degree == 0:
@@ -80,20 +81,20 @@ def Chebyshev_Polynomials_1(degree: int, s: Symbol) -> type[Add]:
 
 
 
-def Chebyshev_Zeros_1(n: int, i: int):
+def Chebyshev_Zeros_1(n: int, i: int) -> float64:
     
-    xi = np.cos(((((2*i) + 1) * np.pi) / ((2*n))))
+    xi = float64(np.cos((float64(((2*i) + 1) * np.pi) / float64((2*n)))))
     
     return xi
 
 
 
 
-def Gauss_Chebyshev_1(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
+def Gauss_Chebyshev_1(n: int, f: type[UndefinedFunction], s: Symbol) -> float64:
     
-    C = 0
+    C = float64(0)
     
-    w = np.pi/(n)
+    w = float64(np.pi/(n))
     
     
     g = lambdify(s, f, "numpy")
@@ -109,19 +110,19 @@ def Gauss_Chebyshev_1(n: int, f: type[UndefinedFunction], s: Symbol) -> float:
 
 def Chebyshev_Zeros_2(n: int, i: int):
     
-    xi = np.cos(((i+1) * np.pi) / ((n+2)))
+    xi = float64(np.cos(float64((i+1) * np.pi) / float64((n+2))))
     
     return xi
 
 
-def Chebyshev_W_2(n: int, i: int) -> float:
+def Chebyshev_W_2(n: int, i: int) -> float64:
     
-    wi = ((np.pi) / (n+2)) * (np.sin(((i + 1) * np.pi) / (n+2))**2)
+    wi = float64((np.pi) / (n+2)) * float64(np.sin(((i + 1) * np.pi) / (n+2))**2)
     
     return wi
 
 
-def Chebyshev_Polynomials_2(degree: int, s: Symbol) -> type[Add]:
+def Chebyshev_Polynomials_2(degree: int, s: Symbol) -> Add:
     
     
     if degree == 0:
@@ -140,9 +141,9 @@ def Chebyshev_Polynomials_2(degree: int, s: Symbol) -> type[Add]:
     return Un
 
 
-def Gauss_Chebyshev_2(n: int, f: type[Add], s: Symbol) -> float:
+def Gauss_Chebyshev_2(n: int, f: type[Add], s: Symbol) -> float64:
     
-    C = 0
+    C = float64(0)
     
     
     g = lambdify(s, f, "numpy")
@@ -150,7 +151,7 @@ def Gauss_Chebyshev_2(n: int, f: type[Add], s: Symbol) -> float:
     
     for i in range(n+1):
         
-        C += (g(Chebyshev_Zeros_2(n, i)) * Chebyshev_W_2(n, i))
+        C += float64(g(Chebyshev_Zeros_2(n, i)) * Chebyshev_W_2(n, i))
         
     
     return C

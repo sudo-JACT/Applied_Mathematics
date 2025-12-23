@@ -1,33 +1,34 @@
 import numpy as np 
 from sympy import lambdify, Symbol
 from sympy.core.function import UndefinedFunction
+from numpy import float64
 
 
-def L1d(vs: list[float], v: float, i: int) -> float:
+def L1d(vs: list[float64], v: float64, i: int) -> float64:
     
-    l = 1
+    l = float64(1)
     
     for j in range(len(vs)):
         
         if j != i:
             
-            l *= ((v-vs[j]) / (vs[i]-vs[j]))
+            l *= float64((v-vs[j]) / (vs[i]-vs[j]))
             
     return l
 
 
 
 
-def Lagrangian_3D(xs: list[float], ys: list[float], fxy, s, t, x: float, y: float) -> float :  # funzione che calcola il polinomio di Lagrange in R2
+def Lagrangian_3D(xs: list[float64], ys: list[float64], fxy, s, t, x: float64, y: float64) -> float64 :  # funzione che calcola il polinomio di Lagrange in R2
     
-    pxy = 0
+    pxy = float64(0)
     
     fxy = lambdify([s, t], fxy, "numpy")
     
     
     for i in range(len(xs)):
         
-        d = 0
+        d = float64(0)
         
         for j in range(len(ys)):
             
