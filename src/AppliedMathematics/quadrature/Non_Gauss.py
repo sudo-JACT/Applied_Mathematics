@@ -78,6 +78,36 @@ def Iterated_Cavalieri_Simpson(a: float64, b: float64, err: float64, points: int
     return (n, Q, E)
     
     
+
+def Iterated_Cavalieri_Simpson_With_Points(points: list[float64], h: float64) -> float64:
+
+    n = len(points)
+    
+    sum1, sum2 = 0, 0
+    
+    for i in range(1, n-1):
+        
+        if i % 2 == 0:
+            
+            sum2 += points[i]
+            
+        else:
+        
+            sum1 += points[i]
+    
+    
+    
+    abn = h / 3
+    
+    fs = points[0] + (2*sum1) + (4*sum2) + points[-1]
+    
+    Q = (abn * (fs))
+        
+    
+    return Q
+    
+
+    
     
 def Newton_Cotes_Weights(n: int) -> list[float64]:  # funzione che restituisce i pesi di Newton-Cotes
     
@@ -353,7 +383,7 @@ if __name__ == "__main__":
     
     e = float64(10**(-8))
     
-    n = float64(3)
+    n = 3
     
     
     print(f"Cavalieri-Simpson Error of f(x)={f}: {Cavalieri_Simpson_Error(a, b, f, x)}", end="\n\n")
@@ -396,10 +426,22 @@ if __name__ == "__main__":
     print("#"*5)
     
     
-    filon = Filon(a, b, points, err, float64(10**(-6)), w, g, x)
+    #filon = Filon(a, b, points, err, float64(10**(-6)), w, g, x)
+    #
+    #print(f"Q: {filon[0]}")
+    #print(f"Estimated Error: {filon[1]}")
+    #print(f"Real Error: {abs(1.18435252813066 - filon[0])}")
+    #print(f"h: {filon[2]}")
+    #print(f"point: {filon[3]}")
     
-    print(f"Q: {filon[0]}")
-    print(f"Estimated Error: {filon[1]}")
-    print(f"Real Error: {abs(1.18435252813066 - filon[0])}")
-    print(f"h: {filon[2]}")
-    print(f"point: {filon[3]}")
+    
+    f = lambdify(x, f, "numpy")
+    
+    n = 10000000
+    print(1/n)
+    yn = np.linspace(0, 1, n)
+    
+    yn = [f(i) for i in yn]
+    
+    print(Iterated_Cavalieri_Simpson_With_Points(yn, float64(1/n)))
+    

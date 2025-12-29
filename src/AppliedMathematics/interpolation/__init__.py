@@ -1,3 +1,3 @@
-from .Interpolation import Lagrange, Linear_Spline, Taylor, Symbolic_Taylor, Divided_Differences, Symbolic_Newtonian_Polynomials, Newtonian_Polynomials, Symbolic_Lagrange
+from .Interpolation import Lagrange, Linear_Spline, Taylor, Symbolic_Taylor, Divided_Differences, Symbolic_Newtonian_Polynomials, Newtonian_Polynomials, Symbolic_Lagrange, Symbolic_Linear_Spline
 
-_all_ = ["Linear_Spline", "Taylor", "Lagrange", "Symbolic_Taylor", "Divided_Differences", "Symbolic_Newtonian_Polynomials", "Newtonian_Polynomials", "Symbolic_Lagrange"]
+_all_ = ["Linear_Spline", "Taylor", "Lagrange", "Symbolic_Taylor", "Divided_Differences", "Symbolic_Newtonian_Polynomials", "Newtonian_Polynomials", "Symbolic_Lagrange", "Symbolic_Linear_Spline"]

@@ -3,6 +3,8 @@ from sympy import *
 from sympy.core.function import UndefinedFunction
 from scipy import *
 from sympy.core.add import Add
+from sympy.core.mul import Mul
+from sympy.core.function import UndefinedFunction
 from numpy import float64
 
 from math import factorial
@@ -28,6 +30,25 @@ def Linear_Spline(x: float64, xn: list[float64], yn: list[float64]) -> float64:
     idx = np.searchsorted(xn, x) - 1
     
     return LS(x, xn[idx:idx+2], yn[idx:idx+2])
+
+
+def Symbolic_Linear_Spline(s: Symbol, xn: list[float64], yn: list[float64]) -> UndefinedFunction:
+    
+    if len(xn) != len(yn):
+        
+        raise Exception("Sorry, xn and yn must have the same lenght")
+    
+    
+    n = len(xn)
+    
+    sp = 0
+    
+    for i in range(n-1):
+        
+        sp = yn[i] + (s-xn[i])*((yn[i]/(xn[i]-xn[i+1]) + (yn[i+1]/(xn[i+1]-xn[i]))))
+        
+    
+    return sp
 
 
 
@@ -243,10 +264,13 @@ if __name__ == "__main__":
     
     
     print("#"*10, end="")
-    print(" Linear Spline ", end="")
+    print(" Linear Spline and Symbolic Linear Spline", end="")
     print("#"*10)
     
-    print(Linear_Spline(x, xn, yn), end="\n\n\n")
+    print(f"Lineal Spline: {Linear_Spline(x, xn, yn)}")
+    sp = Symbolic_Linear_Spline(y, xn, yn)
+    sp = lambdify(y, sp, "numpy")
+    print(f"Symbolic Lineal Spline: {sp(x)}", end="\n\n\n")
     
     
     print("#"*10, end="")
@@ -288,5 +312,6 @@ if __name__ == "__main__":
     print(f"Newtonian: {Newtonian_Polynomials(x, xn, yn)}")
     
     print(f"Symbolic Newtonian: {np(x)}")
+    
     
     

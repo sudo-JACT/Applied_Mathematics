@@ -39,7 +39,7 @@ def Finde_Xk_and_Wk(nodes: int) -> list[list[float64]]:  # funzione che restitui
 
 
 
-def Gauss_Legendre(nodes: int, f: type[UndefinedFunction], s: Symbol, a: float64, b: float64) -> float64:
+def Gauss_Legendre(nodes: int, f: UndefinedFunction, s: Symbol, a: float64, b: float64) -> float64:
     
     m = Finde_Xk_and_Wk(nodes)
     
@@ -90,7 +90,7 @@ def Chebyshev_Zeros_1(n: int, i: int) -> float64:
 
 
 
-def Gauss_Chebyshev_1(n: int, f: type[UndefinedFunction], s: Symbol) -> float64:
+def Gauss_Chebyshev_1(n: int, f: UndefinedFunction, s: Symbol) -> float64:
     
     C = float64(0)
     
