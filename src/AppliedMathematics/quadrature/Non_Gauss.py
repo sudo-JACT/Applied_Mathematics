@@ -73,7 +73,7 @@ def Iterated_Cavalieri_Simpson(a: float64, b: float64, err: float64, points: int
         
     else:
         
-        n, Q, E = Iterated_Cavalieri_Simpson(a, b, ep, (1+n), f, s)
+        n, Q, E = Iterated_Cavalieri_Simpson(a, b, err, (1+n), f, s)
     
     return (n, Q, E)
     
