@@ -499,6 +499,9 @@ if __name__ == "__main__":
     
     xn = [0.0, 1, 2, 4, 5]
     yn = [0.0, 1, 2, 4, 5]
+    yin = [0, 5, 6, 9, 10]
+    yin2 = [None, 0, None, None, None]
+    yiin = [22, 3, 7, 8, 1]
     
     
     
@@ -509,17 +512,18 @@ if __name__ == "__main__":
     print(f"Symbols: {y}, {z}")
     print(f"Function: f(y)={f}")
     print(f"Number to find: {x}")
-    print(f"Points: {[(xn[i], yn[i]) for i in range(len(xn))]}", end="\n\n\n")
+    print(f"xn: {xn}")
+    print(f"yn: {yn}")
+    print(f"yin: {yin}")
+    print(f"yin2: {yin2}")
+    print(f"yiin: {yiin}", end="\n\n\n")
     
     
     print("#"*10, end="")
-    print(" Linear Spline and Symbolic Linear Spline", end="")
+    print(" Linear Spline", end="")
     print("#"*10)
     
-    print(f"Lineal Spline: {Linear_Spline(x, xn, yn)}")
-    sp = Symbolic_Linear_Spline(y, xn, yn)
-    sp = lambdify(y, sp, "numpy")
-    print(f"Symbolic Lineal Spline: {sp(x)}", end="\n\n\n")
+    print(f"Lineal Spline: {Linear_Spline(x, xn, yn)}", end="\n\n\n")
     
     
     print("#"*10, end="")
@@ -560,7 +564,27 @@ if __name__ == "__main__":
     
     print(f"Newtonian: {Newtonian_Polynomials(x, xn, yn)}")
     
-    print(f"Symbolic Newtonian: {np(x)}")
+    print(f"Symbolic Newtonian: {np(x)}", end="\n\n\n")
+    
+    
+    print("#"*10, end="")
+    print(" Quadratic Spline ", end="")
+    print("#"*10)
+    
+    import numpy as np 
+    
+    qb = Quadratic_Spline(x, xn, yn, yin2)
+    
+    print(f"Quadratic Spline: {qb[0]}, {qb[1]}", end="\n\n\n")
+    
+    
+    print("#"*10, end="")
+    print(" Cubic Spline ", end="")
+    print("#"*10)
+    
+    cb = Cubic_Spline(x, xn, yn, yin, yiin)
+    
+    print(f"Cubic Spline: {cb[0]}, {cb[1]}", end="\n\n\n")
     
     
     
