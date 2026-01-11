@@ -51,6 +51,34 @@ def Bezier_Curves(p: list[float64], t: float64) -> float64:  # curva di Bézier
     return b
 
 
+def Gersgorin(m: list[list[float64]]) -> list[tuple[float64, float64]]:
+    
+    if len(m) != len(m[0]):
+        
+        raise Exception("The matrix must be n x n")
+    
+    n = len(m)
+    
+    ks = []
+    
+    
+    for i in range(n):
+        
+        z = abs(m[i][i])
+        
+        r = 0
+        
+        for j in range(n):
+            
+            if j != i:
+                
+                r += abs(m[i][j])
+                                
+                
+        ks.append((z, r))
+    
+    
+    return ks
 
 
 

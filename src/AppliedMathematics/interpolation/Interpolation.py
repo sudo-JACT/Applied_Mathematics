@@ -23,7 +23,7 @@ def Linear_Spline(x: float64, xn: list[float64], yn: list[float64]) -> float64:
         
         raise Exception("Sorry, xn and yn must have the same lenght")
     
-    if x > max(xn):
+    if x > max(xn) or x < min(xn):
         
         raise Exception("Sorry x is not in the range")
     
@@ -31,24 +31,6 @@ def Linear_Spline(x: float64, xn: list[float64], yn: list[float64]) -> float64:
     
     return LS(x, xn[idx:idx+2], yn[idx:idx+2])
 
-
-def Symbolic_Linear_Spline(s: Symbol, xn: list[float64], yn: list[float64]) -> UndefinedFunction:
-    
-    if len(xn) != len(yn):
-        
-        raise Exception("Sorry, xn and yn must have the same lenght")
-    
-    
-    n = len(xn)
-    
-    sp = 0
-    
-    for i in range(n-1):
-        
-        sp = yn[i] + (s-xn[i])*((yn[i]/(xn[i]-xn[i+1]) + (yn[i+1]/(xn[i+1]-xn[i]))))
-        
-    
-    return sp
 
 
 
@@ -233,9 +215,276 @@ def Newtonian_Polynomials(z: float64, x: list[float64], y: list[float64]) -> flo
 
 
 
-# ToDo errore spline, spline cubiche, quadratiche
-# ToDo Gershgorin
-# ToDo interpolazione a due varibili con spline
+
+def Quadratic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list[float64]) -> tuple[float64, list[float64]]:
+    
+    
+    if len(xn) != len(yn):
+        
+        raise Exception("Sorry, xn and yn must have the same lenght")
+    
+    if x > max(xn) or x < min(xn):
+        
+        raise Exception("Sorry x is not in the range")
+    
+    if len(xn) < 3:
+        
+        raise Exception("Not possible")
+    
+    
+    idx = np.searchsorted(xn, x) - 1
+    
+    
+    if idx == 0:
+        
+        ii = [idx, idx+1, idx+2]
+        
+        flag = -1
+        
+    elif idx == len(xn)-1:
+        
+        ii = [idx-2, idx-1, idx]
+        
+        flag = 0
+        
+    else:
+        
+        ii = [idx-1, idx, idx+1]
+        
+        flag = 1
+        
+        
+        
+    if yin[ii[-1]] == None and yin[ii[0]] == None:
+        
+        raise Exception("Not enough conditions")
+    
+    
+    
+    
+    A = [[xn[i]**j for j in range(len(ii))] for i in ii]
+    
+    
+    
+    
+    for i in range(len(ii)):
+        
+        A[0].append(0)
+        
+    for i in range(len(ii)):
+        
+        A[1].append(0)
+        
+        
+    a = [A[1][i] for i in range(len(ii))]
+    
+    for i in range(len(ii)):
+        
+        a.insert(0, 0)
+    
+    A.insert(2, a)
+        
+    for i in range(len(ii)):
+        
+        A[-1].insert(0, 0)
+    
+    
+    
+    m1 = []
+    
+    for j in range(len(ii)):
+            
+        if xn[ii[1]] == 0 and j-1 < 0:
+                
+            m1.append(0)
+            
+        else:
+            
+            m1.append(j*(xn[ii[1]]**(j-1)))
+    
+        
+    for i in range(len(ii)):
+        
+        m1.append(m1[i] * -1)
+    
+    
+    A.append(m1)
+    
+    
+    if yin[ii[-1]] != None:
+        
+    
+        A.append([0, 0, 0, 0, 1, 2*xn[ii[-1]]])
+        
+        b = [yn[idx], yn[ii[1]], yn[ii[1]], yn[ii[-1]], 0, yin[ii[-1]]]
+        
+        
+    else:
+        
+        A.append([0, 1, 2*xn[ii[0]], 0, 0, 0])
+        
+        b = [yn[idx], yn[ii[1]], yn[ii[1]], yn[ii[-1]], 0, yin[ii[0]]]
+    
+    
+    an = np.linalg.solve(A, b)
+    
+    
+    qs = 0
+    
+    
+    for i in range(3):
+        
+        qs += an[i] * (x**i)
+    
+    
+    
+     
+    return (qs, an)
+            
+            
+            
+def Cubic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list[float64], yiin: list[float64]) -> tuple[float64, list[float64]]:
+    
+    if len(xn) != len(yn):
+        
+        raise Exception("Sorry, xn and yn must have the same lenght")
+    
+    
+    if x > max(xn) or x < min(xn):
+        
+        raise Exception("Sorry x is not in the range")
+
+    if None in xn or None in yn or None in yin or None in yiin:
+        
+        raise Exception("None is present")
+    
+    if len(xn) < 3:
+        
+        raise Exception("Not possible")
+    
+    
+    idx = np.searchsorted(xn, x) - 1
+    
+    
+    if idx == 0:
+        
+        ii = [idx, idx+1, idx+2]
+        
+        flag = -1
+        
+    elif idx == len(xn)-1:
+        
+        ii = [idx-2, idx-1, idx]
+        
+        flag = 0
+        
+    else:
+        
+        ii = [idx-1, idx, idx+1]
+        
+        flag = 1
+        
+    
+    
+    A = [[xn[i]**j for j in range(len(ii)+1)] for i in ii]
+            
+    
+    
+    for i in range(len(ii)+1):
+        
+        A[0].append(0)
+        
+    for i in range(len(ii)+1):
+        
+        A[1].append(0)
+        
+        
+    a = [A[1][i] for i in range(len(ii)+1)]
+    
+    for i in range(len(ii)+1):
+        
+        a.insert(0, 0)
+    
+    A.insert(2, a)
+        
+    for i in range(len(ii)+1):
+        
+        A[-1].insert(0, 0)
+        
+        
+    
+    m1 = []
+
+        
+    for j in range(len(ii)+1):
+            
+        if xn[ii[1]] == 0 and j-1 < 0:
+                
+            m1.append(0)
+            
+        else:
+            
+            m1.append(j*(xn[ii[1]]**(j-1)))
+    
+        
+    for i in range(len(ii)+1):
+        
+        m1.append(m1[i] * -1)
+
+    
+    A.append(m1)
+        
+    m = [[0, 0, 2, 6*xn[i]] for i in ii]
+    
+    
+    for i in range(len(ii)+1):
+        
+        m[0].append(0)
+        
+    for i in range(len(ii)+1):
+        
+        m[1].append(m[1][i] * -1)
+        
+    for i in range(len(ii)+1):
+        
+        m[2].insert(0, 0)
+        
+    
+    for i in m:
+        
+        A.append(i)
+        
+        
+    b = [yn[ii[0]], yn[ii[1]], yn[ii[1]], yn[ii[2]], 0, yiin[ii[0]], 0, yiin[ii[2]]]
+    
+    
+    an = np.linalg.solve(A, b)
+    
+    
+    if flag == -1 or flag == 1:
+        
+        cs = 0.0
+        
+        for i in range(0, 4):
+            
+            cs += an[i]*(x**i)
+        
+    else:
+
+        cs = 0.0
+        
+        for i in range(4, len(an)):
+            
+            cs += an[i]*(x**i)
+            
+            
+            
+    return (cs, an)
+    
+    
+    
+    
+
 
 
 
