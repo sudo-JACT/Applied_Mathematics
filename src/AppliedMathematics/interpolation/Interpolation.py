@@ -33,189 +33,6 @@ def Linear_Spline(x: float64, xn: list[float64], yn: list[float64]) -> float64:
 
 
 
-
-
-def Taylor(f, s, x: float64, x0: float64, points: int) -> float64:
-    
-    n = points
-    
-    tmp = lambdify(s, f, 'numpy')
-    der = f.diff(s)
-    d = lambdify(s, der, 'numpy')
-    
-    t = tmp(x0)
-    
-    
-    for i in range(1, n+1):
-        
-        t += float64(d(x0) * (((x-x0)**(i))/factorial((i))))
-        
-        der = der.diff(s)
-        d = lambdify(s, der, 'numpy')
-    
-    return t
-
-
-def Symbolic_Taylor(f, s, x: Symbol, x0: float64, points: int) -> Add:
-    
-    
-    n = points
-    
-    tmp = lambdify(s, f, 'numpy')
-    der = f.diff(s)
-    d = lambdify(s, der, 'numpy')
-    
-    t = tmp(x0)
-    
-    
-    for i in range(1, n+1):
-        
-        t += d(x0) * (((x-x0)**(i))/factorial((i)))
-        
-        der = der.diff(s)
-        d = lambdify(s, der, 'numpy')
-    
-    return t
-
-
-
-def L(vs: list[float64], v: float64, i: int) -> float64:
-    
-    l = float64(1)
-    
-    for j in range(len(vs)):
-        
-        if j != i:
-            
-            l *= float64((v-vs[j]) / (vs[i]-vs[j]))
-            
-    return l
-
-
-def Lagrange(x: float64, xn: list[float64], yn: list[float64]) -> float64:
-    
-    if len(xn) != len(yn):
-        
-        raise Exception("Sorry, xn and yn must have the same lenght")
-    
-    
-    l = float64(0)
-    
-    n = len(xn)
-    
-    for i in range(n):
-        
-        l += float64(yn[i] * L(xn, x, i))
-        
-
-    return l
-
-
-def Symbolic_L(vs: list[float64], s: Symbol, i: int) -> Add:
-    
-    l = float64(1)
-    
-    for j in range(len(vs)):
-        
-        if j != i:
-            
-            l *= ((s-vs[j]) / (vs[i]-vs[j]))
-            
-    return l
-
-
-
-def Symbolic_Lagrange(s: Symbol, xn: list[float64], yn: list[float64]) -> Add:
-    
-    
-    if len(xn) != len(yn):
-        
-        raise Exception("Sorry, xn and yn must have the same lenght")
-    
-    
-    l = float64(0)
-    
-    n = len(xn)
-    
-    for i in range(n):
-        
-        l += yn[i] * Symbolic_L(xn, s, i)
-        
-
-    return l
-
-
-
-def Divided_Differences(x: list[float64], y: list[float64]) -> float64:
-    
-    f = float64(0)
-    
-    n = len(x)
-    
-    for i in range(n):
-        
-        m = 1
-        
-        for j in range(n):
-            
-            if i != j:
-                
-                m *= float64(x[i] - x[j])
-                
-        f += float64(y[i] / m)
-    
-    return f
-
-
-
-def Symbolic_Newtonian_Polynomials(x: list[float64], y: list[float64], s: Symbol) -> Add:
-    
-    if len(x) != len(y):
-        
-        raise Exception("Sorry, x and y must have the same lenght")
-    
-    n = len(x)
-    
-    p = Divided_Differences([x[0]], [y[0]])
-    
-    for i in range(1, n):
-        
-        tmp = 1
-        
-        for j in range(i):
-            
-            tmp *= (s-x[j])
-            
-        p += tmp*Divided_Differences(x[:i+1], y[:i+1])
-        
-    return p
-
-
-def Newtonian_Polynomials(z: float64, x: list[float64], y: list[float64]) -> float64:
-    
-    if len(x) != len(y):
-        
-        raise Exception("Sorry, x and y must have the same lenght")
-    
-    n = len(x)
-    
-    p = Divided_Differences([x[0]], [y[0]])
-    
-    for i in range(1, n):
-        
-        tmp = 1
-        
-        for j in range(i):
-            
-            tmp *= float64(z-x[j])
-            
-        p += float64(tmp*Divided_Differences(x[:i+1], y[:i+1]))
-        
-    return p
-
-
-
-
 def Quadratic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list[float64]) -> tuple[float64, list[float64]]:
     
     
@@ -480,6 +297,299 @@ def Cubic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list[flo
             
             
     return (cs, an)
+
+
+
+
+def Linear_Spline_Error(a: float, b: float, f: UndefinedFunction, s: Symbol, xn: list[float64]=[], h: float=0) -> float64:    
+    
+    if len(xn) == 0 and h <= 0:
+        
+        raise Exception("Not enough data")
+    
+    if len(xn) != 0 and h > 0:  
+        
+        raise Exception("Too much data") 
+        
+    
+    if len(xn) != 0:
+        
+        for i in range(len(xn)-1):
+            
+            if abs(xn[i+1]-xn[i]) > h:
+                
+                h = abs(xn[i+1]-xn[i])
+    
+    
+    
+    D = np.linspace(a, b, 10000)
+    
+    f = f.diff(s, 2)
+    
+    f = lambdify(s, f, "numpy")
+    
+    D = max([abs(f(i)) for i in D])
+    
+    return (D*(h**2))/float64(8)
+    
+    
+
+def Quadratic_Spline_Error(a: float, b: float, f: UndefinedFunction, s: Symbol, xn: list[float64]=[], h: float=0) -> float64:
+    
+    if len(xn) == 0 and h <= 0:
+        
+        raise Exception("Not enough data")
+    
+    if len(xn) != 0 and h > 0:  
+        
+        raise Exception("Too much data") 
+        
+    
+    if len(xn) != 0:
+        
+        for i in range(len(xn)-1):
+            
+            if abs(xn[i+1]-xn[i]) > h:
+                
+                h = abs(xn[i+1]-xn[i])
+                
+                
+    D = np.linspace(a, b, 10000)
+    
+    f = f.diff(s, 3)
+    
+    f = lambdify(s, f, "numpy")
+    
+    D = max([abs(f(i)) for i in D])
+    
+    C = float64(1)/(float64(72)*np.sqrt(3))
+    
+    return ((h**3) * C * D)
+
+
+def Cubic_Spline_Error(a: float, b: float, f: UndefinedFunction, s: Symbol, xn: list[float64]=[], h: float=0, constrained: bool=False) -> float64:
+    
+    if len(xn) == 0 and h <= 0:
+        
+        raise Exception("Not enough data")
+    
+    if len(xn) != 0 and h > 0:  
+        
+        raise Exception("Too much data") 
+        
+    
+    if len(xn) != 0:
+        
+        for i in range(len(xn)-1):
+            
+            if abs(xn[i+1]-xn[i]) > h:
+                
+                h = abs(xn[i+1]-xn[i])
+                
+                
+    D = np.linspace(a, b, 10000)
+    
+    f = f.diff(s, 4)
+    
+    f = lambdify(s, f, "numpy")
+    
+    D = max([abs(f(i)) for i in D])
+    
+    if constrained:
+        
+        C = float64(1) / float64(16)
+        
+    else:
+        
+        C = float64(5) / float64(384)
+        
+    
+    return (C * D * (h**4))
+
+
+
+def Taylor(f, s, x: float64, x0: float64, points: int) -> float64:
+    
+    n = points
+    
+    tmp = lambdify(s, f, 'numpy')
+    der = f.diff(s)
+    d = lambdify(s, der, 'numpy')
+    
+    t = tmp(x0)
+    
+    
+    for i in range(1, n+1):
+        
+        t += float64(d(x0) * (((x-x0)**(i))/factorial((i))))
+        
+        der = der.diff(s)
+        d = lambdify(s, der, 'numpy')
+    
+    return t
+
+
+def Symbolic_Taylor(f, s, x: Symbol, x0: float64, points: int) -> Add:
+    
+    
+    n = points
+    
+    tmp = lambdify(s, f, 'numpy')
+    der = f.diff(s)
+    d = lambdify(s, der, 'numpy')
+    
+    t = tmp(x0)
+    
+    
+    for i in range(1, n+1):
+        
+        t += d(x0) * (((x-x0)**(i))/factorial((i)))
+        
+        der = der.diff(s)
+        d = lambdify(s, der, 'numpy')
+    
+    return t
+
+
+
+def L(vs: list[float64], v: float64, i: int) -> float64:
+    
+    l = float64(1)
+    
+    for j in range(len(vs)):
+        
+        if j != i:
+            
+            l *= float64((v-vs[j]) / (vs[i]-vs[j]))
+            
+    return l
+
+
+def Lagrange(x: float64, xn: list[float64], yn: list[float64]) -> float64:
+    
+    if len(xn) != len(yn):
+        
+        raise Exception("Sorry, xn and yn must have the same lenght")
+    
+    
+    l = float64(0)
+    
+    n = len(xn)
+    
+    for i in range(n):
+        
+        l += float64(yn[i] * L(xn, x, i))
+        
+
+    return l
+
+
+def Symbolic_L(vs: list[float64], s: Symbol, i: int) -> Add:
+    
+    l = float64(1)
+    
+    for j in range(len(vs)):
+        
+        if j != i:
+            
+            l *= ((s-vs[j]) / (vs[i]-vs[j]))
+            
+    return l
+
+
+
+def Symbolic_Lagrange(s: Symbol, xn: list[float64], yn: list[float64]) -> Add:
+    
+    
+    if len(xn) != len(yn):
+        
+        raise Exception("Sorry, xn and yn must have the same lenght")
+    
+    
+    l = float64(0)
+    
+    n = len(xn)
+    
+    for i in range(n):
+        
+        l += yn[i] * Symbolic_L(xn, s, i)
+        
+
+    return l
+
+
+
+def Divided_Differences(x: list[float64], y: list[float64]) -> float64:
+    
+    f = float64(0)
+    
+    n = len(x)
+    
+    for i in range(n):
+        
+        m = 1
+        
+        for j in range(n):
+            
+            if i != j:
+                
+                m *= float64(x[i] - x[j])
+                
+        f += float64(y[i] / m)
+    
+    return f
+
+
+
+def Symbolic_Newtonian_Polynomials(x: list[float64], y: list[float64], s: Symbol) -> Add:
+    
+    if len(x) != len(y):
+        
+        raise Exception("Sorry, x and y must have the same lenght")
+    
+    n = len(x)
+    
+    p = Divided_Differences([x[0]], [y[0]])
+    
+    for i in range(1, n):
+        
+        tmp = 1
+        
+        for j in range(i):
+            
+            tmp *= (s-x[j])
+            
+        p += tmp*Divided_Differences(x[:i+1], y[:i+1])
+        
+    return p
+
+
+def Newtonian_Polynomials(z: float64, x: list[float64], y: list[float64]) -> float64:
+    
+    if len(x) != len(y):
+        
+        raise Exception("Sorry, x and y must have the same lenght")
+    
+    n = len(x)
+    
+    p = Divided_Differences([x[0]], [y[0]])
+    
+    for i in range(1, n):
+        
+        tmp = 1
+        
+        for j in range(i):
+            
+            tmp *= float64(z-x[j])
+            
+        p += float64(tmp*Divided_Differences(x[:i+1], y[:i+1]))
+        
+    return p
+
+
+
+
+
     
     
     
