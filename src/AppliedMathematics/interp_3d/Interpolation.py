@@ -3,6 +3,11 @@ from sympy import lambdify, Symbol
 from sympy.core.function import UndefinedFunction
 from numpy import float64
 
+nullsym = Symbol("")
+nullfunc = nullsym
+nullfunc = nullfunc.diff(nullsym, 2)
+nullfloat = float64(None)
+
 
 def L1d(vs: list[float64], v: float64, i: int) -> float64:
     
@@ -19,28 +24,54 @@ def L1d(vs: list[float64], v: float64, i: int) -> float64:
 
 
 
-def Lagrangian_3D(xs: list[float64], ys: list[float64], fxy, s, t, x: float64, y: float64) -> float64 :  # funzione che calcola il polinomio di Lagrange in R2
+def Lagrangian_3D(xs: list[float64], ys: list[float64], x: float64, y: float64, fxy: UndefinedFunction=nullfunc, s: Symbol=nullsym, t: Symbol=nullsym, zs: list[list[float64]]=[]) -> float64 :  # funzione che calcola il polinomio di Lagrange in R2
+    
+    
+    if (fxy == nullfunc and len(zs) == 0) or (fxy != nullfunc and (s == nullsym or t == nullsym)):
+        
+        raise Exception("Not enough data")
+    
+    if fxy != nullfunc and len(zs) != 0:
+        
+        raise Exception("Too much data")
+    
+    
     
     pxy = float64(0)
     
     fxy = lambdify([s, t], fxy, "numpy")
     
     
-    for i in range(len(xs)):
-        
-        d = float64(0)
-        
-        for j in range(len(ys)):
+    if len(zs) == 0:
+    
+        for i in range(len(xs)):
             
-            c = fxy(xs[i], ys[j])
+            d = float64(0)
             
-            d += c * L1d(ys, y, j) 
+            for j in range(len(ys)):
+                
+                c = fxy(xs[i], ys[j])
+                
+                d += c * L1d(ys, y, j) 
+            
+            pxy += d * L1d(xs, x, i) 
+            
+    else:
         
-        pxy += d * L1d(xs, x, i) 
+        for i in range(len(xs)):
+            
+            d = float64(0)
+            
+            for j in range(len(ys)):
+                
+                c = zs[i][j]
+                
+                d += c * L1d(ys, y, j) 
+            
+            pxy += d * L1d(xs, x, i) 
                 
     
     return pxy
-
 
 
 
@@ -76,9 +107,9 @@ if __name__ == "__main__":
     zx2 = np.linspace(xmin, xmax, 2*interpolation_n)
     zy2 = np.linspace(ymin, ymax, 2*interpolation_n)
     
-    zs = np.array([[Lagrangian_3D(xs, ys, fxy, x, y, xi, yi) for yi in zy] for xi in zx])  # calcolo il polinomio du 5 punti e poi il polinomio su 10
+    zs = np.array([[Lagrangian_3D(xs=xs, ys=ys, fxy=fxy, s=x, t=y, x=xi, y=yi, zs=[]) for yi in zy] for xi in zx])  # calcolo il polinomio du 5 punti e poi il polinomio su 10
     
-    zs2 = np.array([[Lagrangian_3D(xs, ys, fxy, x, y, xi, yi) for yi in zy2] for xi in zx2])
+    zs2 = np.array([[Lagrangian_3D(xs=xs, ys=ys, fxy=fxy, s=x, t=y, x=xi, y=yi, zs=[]) for yi in zy2] for xi in zx2])
         
     
     

@@ -81,9 +81,9 @@ def Chebyshev_Polynomials_1(degree: int, s: Symbol) -> Add:
 
 
 
-def Chebyshev_Zeros_1(n: int, i: int) -> float64:
+def Chebyshev_Zeros_1(points: int, i: int) -> float64:
     
-    xi = float64(np.cos((float64(((2*i) + 1) * np.pi) / float64((2*n)))))
+    xi = float64(np.cos((float64(((2*i) + 1) * np.pi) / float64((2*points)))))
     
     return xi
 

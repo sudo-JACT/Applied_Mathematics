@@ -1,3 +1,3 @@
-from .Interpolation import Lagrange, Linear_Spline, Taylor, Symbolic_Taylor, Divided_Differences, Symbolic_Newtonian_Polynomials, Newtonian_Polynomials, Symbolic_Lagrange, Quadratic_Spline, Cubic_Spline, Linear_Spline_Error, Quadratic_Spline_Error, Cubic_Spline_Error
+from .Interpolation import Lagrange, Linear_Spline, Taylor, Symbolic_Taylor, Divided_Differences, Symbolic_Newtonian_Polynomials, Newtonian_Polynomials, Symbolic_Lagrange, Quadratic_Spline, Cubic_Spline, Linear_Spline_Error, Quadratic_Spline_Error, Cubic_Spline_Error, Vandermonde_Det
 
-_all_ = ["Linear_Spline", "Taylor", "Lagrange", "Symbolic_Taylor", "Divided_Differences", "Symbolic_Newtonian_Polynomials", "Newtonian_Polynomials", "Symbolic_Lagrange", "Quadratic_Spline", "Cubic_Spline", "Linear_Spline_Error", "Quadratic_Spline_Error", "Cubic_Spline_Error"]
+_all_ = ["Linear_Spline", "Taylor", "Lagrange", "Symbolic_Taylor", "Divided_Differences", "Symbolic_Newtonian_Polynomials", "Newtonian_Polynomials", "Symbolic_Lagrange", "Quadratic_Spline", "Cubic_Spline", "Linear_Spline_Error", "Quadratic_Spline_Error", "Cubic_Spline_Error", "Vandermonde_Det"]

@@ -10,6 +10,13 @@ from numpy import float64
 from math import factorial
 
 
+nullsym = Symbol("")
+nullfunc = nullsym
+nullfunc = nullfunc.diff(nullsym, 2)
+nullfloat = float64(None)
+
+
+
 def LS(x: float64, xn: list[float64], yn: list[float64]) -> float64:
     
     y = float64(yn[0] + (x-xn[0])*((yn[0]/(xn[0]-xn[1]) + (yn[1]/(xn[1]-xn[0])))))
@@ -17,32 +24,80 @@ def LS(x: float64, xn: list[float64], yn: list[float64]) -> float64:
     return y
 
 
-def Linear_Spline(x: float64, xn: list[float64], yn: list[float64]) -> float64:
+def Linear_Spline(x: float64, xn: list[float64]=[], yn: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> float64:
     
     if len(xn) != len(yn):
         
         raise Exception("Sorry, xn and yn must have the same lenght")
     
-    if x > max(xn) or x < min(xn):
+    if (x > max(xn) or x < min(xn)) and (len(xn) != 0 and len(yn) != 0):
         
         raise Exception("Sorry x is not in the range")
     
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+        
+        raise Exception("Not enough data")
+    
+    if f != nullfunc and len(xn) != 0:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
+    
+    
+    
     idx = np.searchsorted(xn, x) - 1
+    
+    if idx == -1:
+        
+        idx = len(xn) - 2
     
     return LS(x, xn[idx:idx+2], yn[idx:idx+2])
 
 
 
-def Quadratic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list[float64]) -> tuple[float64, list[float64]]:
+def Quadratic_Spline(x: float64, xn: list[float64]=[], yn: list[float64]=[], yin: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> tuple[float64, list[float64]]:
     
     
     if len(xn) != len(yn):
         
         raise Exception("Sorry, xn and yn must have the same lenght")
     
-    if x > max(xn) or x < min(xn):
+    if (x > max(xn) or x < min(xn)) and (len(xn) != 0 and len(yn) != 0):
         
         raise Exception("Sorry x is not in the range")
+    
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+        
+        raise Exception("Not enough data")
+    
+    if f != nullfunc and len(xn) != 0:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
+        
+        
     
     if len(xn) < 3:
         
@@ -160,20 +215,38 @@ def Quadratic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list
             
             
             
-def Cubic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list[float64], yiin: list[float64]) -> tuple[float64, list[float64]]:
+def Cubic_Spline(x: float64, xn: list[float64]=[], yn: list[float64]=[], yin: list[float64]=[], yiin: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> tuple[float64, list[float64]]:
     
     if len(xn) != len(yn):
         
         raise Exception("Sorry, xn and yn must have the same lenght")
     
     
-    if x > max(xn) or x < min(xn):
+    if (x > max(xn) or x < min(xn)) and (len(xn) != 0 and len(yn) != 0):
         
         raise Exception("Sorry x is not in the range")
-
-    if None in xn or None in yn or None in yin or None in yiin:
+    
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
         
-        raise Exception("None is present")
+        raise Exception("Not enough data")
+    
+    if f != nullfunc and len(xn) != 0:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
+        
+        
     
     if len(xn) < 3:
         
@@ -303,7 +376,7 @@ def Cubic_Spline(x: float64, xn: list[float64], yn: list[float64], yin: list[flo
 
 def Linear_Spline_Error(a: float, b: float, f: UndefinedFunction, s: Symbol, xn: list[float64]=[], h: float=0) -> float64:    
     
-    if len(xn) == 0 and h <= 0:
+    if (len(xn) == 0 and h <= 0) or (f == nullfunc) or (s == nullsym):
         
         raise Exception("Not enough data")
     
@@ -408,7 +481,7 @@ def Cubic_Spline_Error(a: float, b: float, f: UndefinedFunction, s: Symbol, xn: 
 
 
 
-def Taylor(f, s, x: float64, x0: float64, points: int) -> float64:
+def Taylor(f: UndefinedFunction, s: Symbol, x: float64, x0: float64, points: int) -> float64:
     
     n = points
     
@@ -429,7 +502,7 @@ def Taylor(f, s, x: float64, x0: float64, points: int) -> float64:
     return t
 
 
-def Symbolic_Taylor(f, s, x: Symbol, x0: float64, points: int) -> Add:
+def Symbolic_Taylor(f: UndefinedFunction, s: Symbol, x: Symbol, x0: float64, points: int) -> Add:
     
     
     n = points
@@ -465,11 +538,36 @@ def L(vs: list[float64], v: float64, i: int) -> float64:
     return l
 
 
-def Lagrange(x: float64, xn: list[float64], yn: list[float64]) -> float64:
+def Lagrange(x: float64, xn: list[float64]=[], yn: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> float64:
     
     if len(xn) != len(yn):
         
         raise Exception("Sorry, xn and yn must have the same lenght")
+    
+    
+    if (len(xn) != 0 and len(yn) != 0) and (x > max(xn) or x < min(xn)):
+        
+        raise Exception("Sorry x is not in the range")
+    
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+        
+        raise Exception("Not enough data")
+    
+    if f != nullfunc and len(xn) != 0:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
     
     
     l = float64(0)
@@ -498,12 +596,37 @@ def Symbolic_L(vs: list[float64], s: Symbol, i: int) -> Add:
 
 
 
-def Symbolic_Lagrange(s: Symbol, xn: list[float64], yn: list[float64]) -> Add:
+def Symbolic_Lagrange(xn: list[float64]=[], yn: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> Add:
     
     
     if len(xn) != len(yn):
         
         raise Exception("Sorry, xn and yn must have the same lenght")
+    
+    
+    if (x > max(xn) or x < min(xn)) and (len(xn) != 0 and len(yn) != 0):
+        
+        raise Exception("Sorry x is not in the range")
+    
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+        
+        raise Exception("Not enough data")
+    
+    if f != nullfunc and len(xn) != 0:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
     
     
     l = float64(0)
@@ -519,11 +642,36 @@ def Symbolic_Lagrange(s: Symbol, xn: list[float64], yn: list[float64]) -> Add:
 
 
 
-def Divided_Differences(x: list[float64], y: list[float64]) -> float64:
+def Divided_Differences(xn: list[float64]=[], yn: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> float64:
     
-    f = float64(0)
+    if len(xn) != len(yn):
+        
+        raise Exception("Sorry, xn and yn must have the same lenght")
     
-    n = len(x)
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+        
+        raise Exception("Not enough data")
+    
+    if f != nullfunc:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc and len(xn) == 0:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
+        
+    
+    df = float64(0)
+    
+    n = len(xn)
     
     for i in range(n):
         
@@ -533,23 +681,48 @@ def Divided_Differences(x: list[float64], y: list[float64]) -> float64:
             
             if i != j:
                 
-                m *= float64(x[i] - x[j])
+                m *= float64(xn[i] - xn[j])
                 
-        f += float64(y[i] / m)
+        df += float64(yn[i] / m)
     
-    return f
+    return df
 
 
 
-def Symbolic_Newtonian_Polynomials(x: list[float64], y: list[float64], s: Symbol) -> Add:
+def Symbolic_Newtonian_Polynomials(xn: list[float64]=[], yn: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> Add:
     
-    if len(x) != len(y):
+    if len(xn) != len(yn):
         
-        raise Exception("Sorry, x and y must have the same lenght")
+        raise Exception("Sorry, xn and yn must have the same lenght")
     
-    n = len(x)
     
-    p = Divided_Differences([x[0]], [y[0]])
+    if (x > max(xn) or x < min(xn)) and (len(xn) != 0 and len(yn) != 0):
+        
+        raise Exception("Sorry x is not in the range")
+    
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+        
+        raise Exception("Not enough data")
+    
+    if f != nullfunc and len(xn) != 0:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
+    
+    n = len(xn)
+    
+    p = Divided_Differences(xn=[xn[0]], yn=[yn[0]], f=f, s=s, a=a, b=b, h=h)
     
     for i in range(1, n):
         
@@ -557,22 +730,48 @@ def Symbolic_Newtonian_Polynomials(x: list[float64], y: list[float64], s: Symbol
         
         for j in range(i):
             
-            tmp *= (s-x[j])
+            tmp *= (s-xn[j])
             
-        p += tmp*Divided_Differences(x[:i+1], y[:i+1])
+        p += tmp*Divided_Differences(xn=xn[:i+1], yn=yn[:i+1], f=f, s=s, a=a, b=b, h=h)
         
     return p
 
 
-def Newtonian_Polynomials(z: float64, x: list[float64], y: list[float64]) -> float64:
+def Newtonian_Polynomials(x: float64, xn: list[float64]=[], yn: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, h: float64=nullfloat) -> float64:
     
-    if len(x) != len(y):
+    if len(xn) != len(yn):
         
-        raise Exception("Sorry, x and y must have the same lenght")
+        raise Exception("Sorry, xn and yn must have the same lenght")
     
-    n = len(x)
     
-    p = Divided_Differences([x[0]], [y[0]])
+    if (x > max(xn) or x < min(xn)) and (len(xn) != 0 and len(yn) != 0):
+        
+        raise Exception("Sorry x is not in the range")
+    
+    
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+        
+        raise Exception("Not enough data")
+    
+    if f != nullfunc and len(xn) != 0:
+        
+        raise Exception("Too much data")
+    
+    
+    if f != nullfunc:
+        
+        f = lambdify(s, f, "numpy")
+        
+        n = int((b-a)/h)
+        
+        xn = np.linspace(a, b, n)
+        
+        yn = [f(i) for i in xn]
+        
+    
+    n = len(xn)
+    
+    p = Divided_Differences([xn[0]], [yn[0]])
     
     for i in range(1, n):
         
@@ -580,19 +779,39 @@ def Newtonian_Polynomials(z: float64, x: list[float64], y: list[float64]) -> flo
         
         for j in range(i):
             
-            tmp *= float64(z-x[j])
+            tmp *= float64(x-xn[j])
             
-        p += float64(tmp*Divided_Differences(x[:i+1], y[:i+1]))
+        p += float64(tmp*Divided_Differences(xn[:i+1], yn[:i+1]))
         
     return p
 
 
-
-
-
+def Vandermonde_Det(V: list[list[float64]]) -> float64:
     
+    n = len(V)
     
+    for i in range(n):
+        
+        for j in V:
+            
+            if n != len(j):
+                
+                raise Exception("Non-Square Matrix")
+            
+    d = float64(1)
     
+    for i in range(n-1):
+        
+        d2 = float64(1)
+        
+        for j in range(i+1, n):
+            
+            d2 *= (V[j][1] - V[i][1])
+            
+        d *= d2
+        
+    
+    return d
     
 
 
@@ -656,7 +875,7 @@ if __name__ == "__main__":
     
     print(f"Lagrange: {Lagrange(x, xn, yn)}")
     
-    l = Symbolic_Lagrange(y, xn, yn)
+    l = Symbolic_Lagrange(s=y, xn=xn, yn=yn)
     
     l = lambdify(y, l, "numpy")
     
@@ -667,7 +886,7 @@ if __name__ == "__main__":
     print(" Newtonian and Symbolic Newtonian ", end="")
     print("#"*10)
     
-    np = Symbolic_Newtonian_Polynomials(xn, yn, y)
+    np = Symbolic_Newtonian_Polynomials(xn=xn, yn=xn, s=y)
     
     
     np = lambdify(y, np, "numpy")
@@ -683,7 +902,7 @@ if __name__ == "__main__":
     
     import numpy as np 
     
-    qb = Quadratic_Spline(x, xn, yn, yin2)
+    qb = Quadratic_Spline(x=x, xn=xn, yn=yn, yin=yin2)
     
     print(f"Quadratic Spline: {qb[0]}, {qb[1]}", end="\n\n\n")
     

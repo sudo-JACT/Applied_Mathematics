@@ -1,5 +1,14 @@
 from math import factorial
 from numpy import float64
+from sympy import Symbol
+from sympy.core.function import UndefinedFunction
+
+
+nullsym = Symbol("")
+nullfunc = nullsym
+nullfunc = nullfunc.diff(nullsym, 2)
+nullfloat = float64(None)
+
 
 def Horner(a: list[float64], x: float64) -> float64:
     
