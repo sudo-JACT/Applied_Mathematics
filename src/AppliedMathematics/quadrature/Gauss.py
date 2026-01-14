@@ -5,10 +5,7 @@ from sympy.core.add import Add
 from numpy import float64
 
 
-
-def write_on_file():
-    
-    pass
+from ..core import nullfunc, nullfloat, nullsym
 
 
 
@@ -39,7 +36,11 @@ def Finde_Xk_and_Wk(nodes: int) -> list[list[float64]]:  # funzione che restitui
 
 
 
-def Gauss_Legendre(nodes: int, f: UndefinedFunction, s: Symbol, a: float64, b: float64) -> float64:
+def Gauss_Legendre(nodes: int, f: UndefinedFunction=nullfunc, s: Symbol=nullsym, a: float64=nullfloat, b: float64=nullfloat, yn: list[float64]=[]) -> float64:
+    
+    if f != nullfunc and len(yn) != 0:
+        
+        raise Exception("Too much data")
     
     m = Finde_Xk_and_Wk(nodes)
     
@@ -47,14 +48,23 @@ def Gauss_Legendre(nodes: int, f: UndefinedFunction, s: Symbol, a: float64, b: f
     
     n = len(m[0])
     
-    g = lambdify(s, f, "numpy")
+    if f != nullfunc:
     
+        g = lambdify(s, f, "numpy")
+        
+        
+        for i in range(n):
+            
+            x = float64(((b-a)/2) * m[1][i]) + ((a+b)/2)
+            
+            G += float64(m[0][i] * g(x))
+            
     
-    for i in range(n):
+    else:
         
-        x = float64(((b-a)/2) * m[1][i]) + ((a+b)/2)
-        
-        G += float64(m[0][i] * g(x))
+        for i in range(n):
+            
+            G += float64(m[0][i] * yn[i])
         
     
     return G * float64((b-a) / 2)

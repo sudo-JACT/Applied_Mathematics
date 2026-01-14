@@ -533,7 +533,7 @@ def L(vs: list[float64], v: float64, i: int) -> float64:
         
         if j != i:
             
-            l *= float64((v-vs[j]) / (vs[i]-vs[j]))
+            l *= ((v-vs[j]) / (vs[i]-vs[j]))
             
     return l
 
@@ -744,7 +744,7 @@ def Newtonian_Polynomials(x: float64, xn: list[float64]=[], yn: list[float64]=[]
         raise Exception("Sorry, xn and yn must have the same lenght")
     
     
-    if (x > max(xn) or x < min(xn)) and (len(xn) != 0 and len(yn) != 0):
+    if (len(xn) != 0 and len(yn) != 0) and (x > max(xn) or x < min(xn)):
         
         raise Exception("Sorry x is not in the range")
     
