@@ -1,3 +1,3 @@
-from .Core import Horner, binomial, convert, nullfloat, nullfunc, nullsym
+from .Core import Horner, binomial, convert, nullfloat, nullfunc, nullsym, tronca
 
-_all_ = ["Horner", "binomial", "convert", "nullfloat", "nullfunc", "nullsym"]
+_all_ = ["Horner", "binomial", "convert", "nullfloat", "nullfunc", "nullsym", "tronca"]
