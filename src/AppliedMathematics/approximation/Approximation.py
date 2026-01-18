@@ -13,9 +13,9 @@ def binomial(k: int, n: int) -> float64:
 
 
 
-def Bernstein_Polynomials(k: int, n: int, x: float64) -> float64 :
+def Bernstein_Polynomials(k: int, n: int, x: float64, a: float64=float64(0), b: float64=float64(1)) -> float64 :
     
-    return (binomial(k, n) * float64(x**k) * float64((1-x)**(n-k)))
+    return ((binomial(k, n) * float64((x-a)**k) * float64((b-x)**(n-k))) / ((b-a)**n))
 
 
 
@@ -53,11 +53,15 @@ def Bezier_Curves(p: list[float64], t: float64) -> float64:  # curva di Bézier
 
 def Gersgorin(m: list[list[float64]]) -> list[tuple[float64, float64]]:
     
-    if len(m) != len(m[0]):
-        
-        raise Exception("The matrix must be n x n")
-    
     n = len(m)
+    
+    for i in range(n):
+        
+        for j in m:
+            
+            if n != len(j):
+                
+                raise Exception("Non-Square Matrix")
     
     ks = []
     

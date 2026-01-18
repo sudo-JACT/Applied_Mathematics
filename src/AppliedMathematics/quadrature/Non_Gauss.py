@@ -4,22 +4,7 @@ from sympy.core.function import UndefinedFunction
 from numpy import float64
 
 
-def tronca(n: float64, i: int) -> float64:
-    
-    return float64(f"{n:.{i}f}")
-
-
-def convert(x: float64) -> tuple[int, float64]:
-    
-    i = 0
-    
-    while x < 1:
-        
-        x = x * 10
-        
-        i += 1
-    
-    return (i, x)
+from ..core import tronca, convert
 
 
 def Cavalieri_Simpson(a: float64, b: float64, f, s: Symbol) -> float64:
@@ -77,7 +62,13 @@ def Iterated_Cavalieri_Simpson(a: float64, b: float64, err: float64, points: int
     
     return (n, Q, E)
     
-    
+ 
+ 
+ 
+ # Todo rifattorizzare funzioni gauss e non gauss
+ 
+ 
+ 
 
 def Iterated_Cavalieri_Simpson_With_Points(points: list[float64], h: float64) -> float64:
 

@@ -4,5 +4,6 @@ from .interp_3d import *
 from .info import version
 from .core import *
 from .approximation import *
+from .roots import *
 
 _all_ = ["version"]

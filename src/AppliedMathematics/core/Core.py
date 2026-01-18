@@ -45,6 +45,65 @@ def tronca(n: float64, i: int) -> float64:
     return float64(f"{n:.{i}f}")
 
 
+def Sim_Matrix(m: list[list[float64]]) -> bool:
+    
+    n = len(m)
+    
+    for i in range(n):
+        
+        for j in m:
+            
+            if n != len(j):
+                
+                raise Exception("Non-Square Matrix")
+    
+    
+    for i in range(len(m)):
+        
+        for j in range(len(m[i])):
+            
+            if m[i][j] != m[j][i]:
+                
+                return False
+            
+            
+    return True
+
+
+
+
+def Tri_Diag_Matrix(m: list[list[float64]]) -> bool:
+    
+    n = len(m)
+    
+    for i in range(n):
+        
+        for j in m:
+            
+            if n != len(j):
+                
+                raise Exception("Non-Square Matrix")
+    
+    
+    for k in range(2, len(m)):
+    
+        for i in range(k, len(m)):
+            
+            c = 0
+        
+            for j in range(i-k, len(m)-k):
+                
+                if m[i+c][j] != 0 or m[j][i+c] != 0:
+                    
+                    return False
+                
+                    
+                c += 1
+                
+    return True
+
+
+
 
 if __name__ == "__main__":
     

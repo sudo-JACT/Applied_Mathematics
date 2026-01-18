@@ -1,3 +1,3 @@
-from .roots import Bisection_Method
+from .Roots import Bisection_Method, Secant_Method, Chord_Method, Newtons_Method, Regula_Falsi
 
-_all_ = ["Bisection_Method"]
+_all_ = ["Bisection_Method", "Secant_Method", "Chord_Method", "Newtons_Method", "Regula_Falsi"]

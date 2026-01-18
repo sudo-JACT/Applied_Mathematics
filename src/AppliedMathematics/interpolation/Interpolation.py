@@ -35,7 +35,7 @@ def Linear_Spline(x: float64, xn: list[float64]=[], yn: list[float64]=[], f: Und
         raise Exception("Sorry x is not in the range")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
@@ -78,7 +78,7 @@ def Quadratic_Spline(x: float64, xn: list[float64]=[], yn: list[float64]=[], yin
         raise Exception("Sorry x is not in the range")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
@@ -227,7 +227,7 @@ def Cubic_Spline(x: float64, xn: list[float64]=[], yn: list[float64]=[], yin: li
         raise Exception("Sorry x is not in the range")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
@@ -550,7 +550,7 @@ def Lagrange(x: float64, xn: list[float64]=[], yn: list[float64]=[], f: Undefine
         raise Exception("Sorry x is not in the range")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
@@ -609,7 +609,7 @@ def Symbolic_Lagrange(xn: list[float64]=[], yn: list[float64]=[], f: UndefinedFu
         raise Exception("Sorry x is not in the range")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
@@ -649,7 +649,7 @@ def Divided_Differences(xn: list[float64]=[], yn: list[float64]=[], f: Undefined
         raise Exception("Sorry, xn and yn must have the same lenght")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
@@ -701,7 +701,7 @@ def Symbolic_Newtonian_Polynomials(xn: list[float64]=[], yn: list[float64]=[], f
         raise Exception("Sorry x is not in the range")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
@@ -749,7 +749,7 @@ def Newtonian_Polynomials(x: float64, xn: list[float64]=[], yn: list[float64]=[]
         raise Exception("Sorry x is not in the range")
     
     
-    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (a == nullfloat or b == nullfloat)):
+    if (f == nullfunc and len(xn) == 0) or (f != nullfunc and (s == nullsym)) or (f != nullfunc and (np.isnan(a) or np.isnan(b))):
         
         raise Exception("Not enough data")
     
