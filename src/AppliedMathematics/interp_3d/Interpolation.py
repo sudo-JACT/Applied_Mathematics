@@ -3,10 +3,8 @@ from sympy import lambdify, Symbol
 from sympy.core.function import UndefinedFunction
 from numpy import float64
 
-nullsym = Symbol("")
-nullfunc = nullsym
-nullfunc = nullfunc.diff(nullsym, 2)
-nullfloat = float64(None)
+from ..core import nullfloat, nullfunc, nullsym
+from ..interpolation import Divided_Differences
 
 
 def L1d(vs: list[float64], v: float64, i: int) -> float64:
@@ -24,7 +22,7 @@ def L1d(vs: list[float64], v: float64, i: int) -> float64:
 
 
 
-def Lagrangian_3D(xs: list[float64], ys: list[float64], x: float64, y: float64, fxy: UndefinedFunction=nullfunc, s: Symbol=nullsym, t: Symbol=nullsym, zs: list[list[float64]]=[]) -> float64 :  # funzione che calcola il polinomio di Lagrange in R2
+def Lagrangian_R2(xs: list[float64], ys: list[float64], x: float64, y: float64, fxy: UndefinedFunction=nullfunc, s: Symbol=nullsym, t: Symbol=nullsym, zs: list[list[float64]]=[]) -> float64 :  # funzione che calcola il polinomio di Lagrange in R2
     
     
     if (fxy == nullfunc and len(zs) == 0) or (fxy != nullfunc and (s == nullsym or t == nullsym)):
@@ -75,6 +73,113 @@ def Lagrangian_3D(xs: list[float64], ys: list[float64], x: float64, y: float64, 
 
 
 
+def DivDif_2(xn: list[float64], yn: list[float64], zn: list[list[float64]], n: int, m: int) -> float64:
+    
+    d = float64(0)
+    
+    
+    for i in range(n+1):
+        
+        
+        f = float64(0)
+        
+        
+        
+        
+        for j in range(m+1):
+            
+            
+            d2 = float64(1)
+            
+            for k in range(m+1):
+                
+                if k != j:
+                    
+                    d2 *= (yn[j] - yn[k])
+                    
+                    
+            f += zn[i][j] / d2
+            
+            
+        d3 = float64(1)
+        
+        for k in range(n+1):
+            
+            if k != i:
+                
+                d3 *= (xn[i] - xn[k])
+                
+        
+        d += f/d3
+                    
+    
+    return d
+
+
+
+def Weights(x: float64, xn: list[float64], k: int) -> float64:
+    
+    w = float64(1)
+    
+    if k == 0:
+        
+        return w
+    
+    
+    for i in range(k):
+    
+        w *= (x-xn[i])
+        
+    return w
+
+
+
+
+def Newtonian_Polynomials_R2(xn: list[float64], yn: list[float64], x: float64, y: float64, zn: list[list[float64]]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym, t: Symbol=nullsym) -> float64:
+    
+    
+    if (len(zn) == 0) and (f == nullfloat or (s == nullsym or t == nullsym)):
+        
+        raise Exception("Not enough data")
+    
+    
+    if len(zn) == 0:
+        
+        f = lambdify([s, t], f, "numpy")
+        
+        zn = [[f(i, j) for j in yn] for i in xn]
+    
+    
+    
+    
+    d = float64(0)
+    
+    n = len(xn)
+    m = len(yn)
+    
+    for i in range(n):
+        
+        wx = Weights(x, xn, i)
+        
+        d2 = float64(0)
+        
+        for j in range(m):
+            
+            wy = Weights(y, yn, j) 
+            
+            d2 += wy * DivDif_2(xn, yn, zn, i, j)
+            
+            
+        d += wx * d2
+    
+    
+    
+        
+    return d
+
+
+
+
 
 if __name__ == "__main__":
     
@@ -107,9 +212,9 @@ if __name__ == "__main__":
     zx2 = np.linspace(xmin, xmax, 2*interpolation_n)
     zy2 = np.linspace(ymin, ymax, 2*interpolation_n)
     
-    zs = np.array([[Lagrangian_3D(xs=xs, ys=ys, fxy=fxy, s=x, t=y, x=xi, y=yi, zs=[]) for yi in zy] for xi in zx])  # calcolo il polinomio du 5 punti e poi il polinomio su 10
+    zs = np.array([[Lagrangian_R2(xs=zx, ys=zy, fxy=fxy, s=x, t=y, x=xi, y=yi, zs=[]) for yi in ys] for xi in xs])  # calcolo il polinomio du 5 punti e poi il polinomio su 10
     
-    zs2 = np.array([[Lagrangian_3D(xs=xs, ys=ys, fxy=fxy, s=x, t=y, x=xi, y=yi, zs=[]) for yi in zy2] for xi in zx2])
+    zs2 = np.array([[Lagrangian_R2(xs=zx2, ys=zy2, fxy=fxy, s=x, t=y, x=xi, y=yi, zs=[]) for yi in ys] for xi in xs])
         
     
     
@@ -141,7 +246,7 @@ if __name__ == "__main__":
     fig = plt.figure(figsize=(10, 8))
     ax2 = plt.axes(projection='3d')
     
-    surf2 = ax2.plot_surface(zx, zy, zs, cmap='magma', alpha=0.9, linewidth=0, antialiased=True)
+    surf2 = ax2.plot_surface(X, Y, zs, cmap='magma', alpha=0.9, linewidth=0, antialiased=True)
     ax2.set_title(f'Interpolazione di Lagrange interpolato su {interpolation_n} punti', fontsize=14, fontweight='bold')
     ax2.set_xlabel('x')
     ax2.set_ylabel('y')
@@ -152,7 +257,7 @@ if __name__ == "__main__":
     fig = plt.figure(figsize=(10, 8))
     ax5 = plt.axes(projection='3d')
     
-    surf5 = ax5.plot_surface(zx2, zy2, zs2, cmap='Greys', alpha=0.9, linewidth=0, antialiased=True)
+    surf5 = ax5.plot_surface(X, Y, zs2, cmap='Greys', alpha=0.9, linewidth=0, antialiased=True)
     ax5.set_title(f'Interpolazione di Lagrange interpolato su {2*interpolation_n} punti', fontsize=14, fontweight='bold')
     ax5.set_xlabel('x')
     ax5.set_ylabel('y')

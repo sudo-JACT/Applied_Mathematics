@@ -1,3 +1,3 @@
-from .Interpolation import Lagrangian_3D
+from .Interpolation import Lagrangian_R2, Newtonian_Polynomials_R2
 
-_all_ = ["Lagrangian_3D"]
+_all_ = ["Lagrangian_R2", "Newtonian_Polynomials_R2"]

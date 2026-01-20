@@ -4,7 +4,7 @@ from sympy.core.function import UndefinedFunction
 from numpy import float64
 
 
-from ..core import tronca, convert
+from ..core import tronca, convert, nullfunc, nullfloat, nullsym
 
 
 def Cavalieri_Simpson(a: float64, b: float64, f, s: Symbol) -> float64:
@@ -18,7 +18,7 @@ def Cavalieri_Simpson(a: float64, b: float64, f, s: Symbol) -> float64:
 
 
 
-def Iterated_Cavalieri_Simpson(a: float64, b: float64, err: float64, points: int, f, s: Symbol) -> tuple[int, float64, float64]:
+def Iterated_Cavalieri_Simpson(a: float64, b: float64, err: float64, points: int, f: UndefinedFunction, s: Symbol) -> tuple[int, float64, float64]:
 
     n = points
     
@@ -70,30 +70,47 @@ def Iterated_Cavalieri_Simpson(a: float64, b: float64, err: float64, points: int
  
  
 
-def Iterated_Cavalieri_Simpson_With_Points(points: list[float64], h: float64) -> float64:
+def Iterated_Cavalieri_Simpson_With_Points(a: float64, b: float64, n: int, y: list[float64]=[], f: UndefinedFunction=nullfunc, s: Symbol=nullsym) -> float64:
 
-    n = len(points)
+
+    if ((f == nullfunc) and (len(y) == 0)):
+        
+        raise Exception("Missing data")
+    
+
+    h = (b-a) / n
+    
+    
+    if len(y) == 0:
+        
+        f = lambdify(s, f, "numpy")
+        
+        y = np.linspace(a, b, n)
+        
+        y = [f(i) for i in y]
+
+
     
     sum1, sum2 = 0, 0
     
-    for i in range(1, n-1):
+    for i in range(len(y)-1):
         
         if i % 2 == 0:
             
-            sum2 += points[i]
+            sum2 += y[i]
             
         else:
         
-            sum1 += points[i]
+            sum1 += y[i]
     
     
     
     abn = h / 3
     
-    fs = points[0] + (2*sum1) + (4*sum2) + points[-1]
+    fs = y[0] + (2*sum1) + (4*sum2) + y[-1]
     
     Q = (abn * (fs))
-        
+         
     
     return Q
     
@@ -116,17 +133,26 @@ def Newton_Cotes_Weights(n: int) -> list[float64]:  # funzione che restituisce i
 
 
 
-def Newton_Cotes(points: int, f, s: Symbol, a: float64, b: float64) -> float64:  # fuzione che calcola la quadratura di Newton-Cotes
+def Newton_Cotes(a: float64, b: float64, points: int, f: UndefinedFunction=nullfunc, s: Symbol=nullsym, y: list[float64]=[]) -> float64:  # fuzione che calcola la quadratura di Newton-Cotes
     
     n = points
     
-    f = lambdify(s, f, "numpy")
+    if ((f == nullfunc) and (len(y) == 0)):
+        
+        raise Exception("Missing data")
     
-    y = np.linspace(a, b, n+1)  # Calcolo tutti gli yi
     
-    y2 = [f(i) for i in y]
+    if len(y) == 0 and f != nullfunc:
     
-    y = y2
+        f = lambdify(s, f, "numpy")
+    
+        y = np.linspace(a, b, n+1)  # Calcolo tutti gli yi
+    
+        y2 = [f(i) for i in y]
+    
+        y = y2
+        
+    
     
     w = Newton_Cotes_Weights(n)
     
@@ -143,12 +169,21 @@ def Newton_Cotes(points: int, f, s: Symbol, a: float64, b: float64) -> float64: 
 
 
 
-def Trapezoidal_Rule(a: float64, b: float64, f, s: Symbol) -> float64:
+def Trapezoidal_Rule(a: float64, b: float64, f: UndefinedFunction=nullfunc, s: Symbol=nullsym, y: list[float64]=[]) -> float64:
     
-    g = lambdify(s, f, "numpy")
+    if ((f == nullfunc) and (len(y) == 0)):
+        
+        raise Exception("Missing data")
     
     
-    return ((b-a) / 2) * (g(a) + g(b))
+    if len(y) == 0 and f != nullfunc:
+    
+        g = lambdify(s, f, "numpy")
+    
+        y = [g(a), g(b)] 
+    
+    
+    return ((b-a) / 2) * (y[0] + y[1])
 
 
 
@@ -434,5 +469,5 @@ if __name__ == "__main__":
     
     yn = [f(i) for i in yn]
     
-    print(Iterated_Cavalieri_Simpson_With_Points(yn, float64(1/n)))
+    print(Iterated_Cavalieri_Simpson(yn, float64(1/n)))
     
