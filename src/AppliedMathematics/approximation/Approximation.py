@@ -51,6 +51,9 @@ def Bezier_Curves(p: list[float64], t: float64) -> float64:  # curva di Bézier
     return b
 
 
+
+
+
 def Gersgorin(m: list[list[float64]]) -> list[tuple[float64, float64]]:
     
     n = len(m)
